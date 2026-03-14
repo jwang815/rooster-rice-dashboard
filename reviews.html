@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rooster &amp; Rice &#8212; Reviews Dashboard</title>
+<style>
+#login-gate{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#0f1117}
+#login-gate h2{color:#f59e0b;font-size:24px;margin-bottom:8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+#login-gate p{color:#9ca3af;font-size:14px;margin-bottom:20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+#login-gate input{padding:12px 16px;border-radius:8px;border:1px solid #2a2d3a;background:#1a1d27;color:#e4e4e7;font-size:15px;width:280px;margin-bottom:12px;outline:none;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+#login-gate input:focus{border-color:#f59e0b}
+#login-gate button{padding:12px 32px;border-radius:8px;border:none;background:#f59e0b;color:#0f1117;font-weight:600;font-size:15px;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+#login-gate button:hover{background:#d97706}
+#login-gate .error{color:#ef4444;font-size:13px;margin-top:8px;display:none;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+#dashboard-content{display:none}
+:root{--bg:#0f1117;--card:#1a1d27;--border:#2a2d3a;--text:#e4e4e7;--muted:#9ca3af;--accent:#f59e0b;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--purple:#a855f7;--cyan:#06b6d4;--orange:#f97316;--pink:#ec4899}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);padding:24px;line-height:1.5}
+.nav-toggle{display:flex;justify-content:center;gap:4px;padding:16px 0 0;background:#0f1117;position:sticky;top:0;z-index:100}
+.nav-toggle a{padding:10px 28px;border-radius:24px;font-size:14px;font-weight:600;text-decoration:none;color:#9ca3af;transition:all 0.2s}
+.nav-toggle a.active{background:#f59e0b;color:#0f1117}
+.nav-toggle a:not(.active):hover{color:#e4e4e7;background:rgba(255,255,255,0.05)}
+.header{text-align:center;margin-bottom:32px}
+.header h1{font-size:28px;font-weight:700;color:var(--accent)}
+.header p{color:var(--muted);font-size:14px;margin-top:4px}
+.loc-tabs{display:flex;justify-content:center;gap:8px;margin-bottom:28px;flex-wrap:wrap}
+.loc-tabs button{padding:8px 20px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:inherit}
+.loc-tabs button.active{background:var(--accent);color:#0f1117;border-color:var(--accent)}
+.loc-tabs button:hover:not(.active){color:var(--text);border-color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+.card h3{font-size:15px;font-weight:600;margin-bottom:14px;color:var(--text)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:24px}
+.section-title{font-size:18px;font-weight:700;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.rating-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center}
+.rating-card .platform{font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:8px}
+.rating-card .score{font-size:36px;font-weight:700;color:var(--accent)}
+.rating-card .count{font-size:13px;color:var(--muted);margin-top:4px}
+.stars{color:#f59e0b;letter-spacing:2px}
+.star-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:13px}
+.star-bar-row .label{width:30px;color:var(--muted);text-align:right}
+.star-bar-row .bar-bg{flex:1;height:10px;background:var(--border);border-radius:5px;overflow:hidden}
+.star-bar-row .bar-fill{height:100%;border-radius:5px;background:var(--accent)}
+.star-bar-row .pct{width:36px;color:var(--muted);font-size:12px}
+.tag{display:inline-block;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600;margin:3px}
+.tag.good{background:rgba(34,197,94,0.15);color:var(--green)}
+.tag.warn{background:rgba(239,68,68,0.15);color:var(--red)}
+.action-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;border-left:4px solid}
+.action-card.urgent{border-left-color:var(--red)}
+.action-card.watch{border-left-color:var(--orange)}
+.action-card.opportunity{border-left-color:var(--green)}
+.action-card .loc-name{font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:4px}
+.action-card .action-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.action-card .action-desc{font-size:13px;color:var(--muted)}
+.action-card .badge{display:inline-block;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600;margin-bottom:8px}
+.action-card.urgent .badge{background:rgba(239,68,68,0.15);color:var(--red)}
+.action-card.watch .badge{background:rgba(249,115,22,0.15);color:var(--orange)}
+.action-card.opportunity .badge{background:rgba(34,197,94,0.15);color:var(--green)}
+.review-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+.review-item .rev-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.review-item .rev-author{font-size:13px;font-weight:600}
+.review-item .rev-date{font-size:11px;color:var(--muted)}
+.review-item .rev-text{font-size:13px;color:var(--muted);line-height:1.5}
+.review-col h4{font-size:13px;font-weight:600;margin-bottom:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+.insight-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+.insight-card .insight-num{display:inline-block;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#0f1117;font-size:12px;font-weight:700;text-align:center;line-height:24px;margin-right:8px}
+.insight-card .insight-title{font-size:14px;font-weight:600;display:inline}
+.insight-card .insight-body{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.6}
+.callout-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+@media(max-width:900px){.grid-2,.callout-grid{grid-template-columns:1fr}.grid-3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="login-gate">
+<h2>Rooster &amp; Rice</h2>
+<p>Enter password to view the investor dashboard</p>
+<input type="password" id="pw-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()">
+<button onclick="checkPw()">Enter</button>
+<div class="error" id="pw-error">Incorrect password. Try again.</div>
+</div>
+<div id="dashboard-content">
+<div class="nav-toggle">
+<a href="index.html">Performance</a>
+<a href="reviews.html" class="active">Reviews</a>
+</div>
+<div class="header">
+<h1>Rooster &amp; Rice &#8212; Reviews Dashboard</h1>
+<p>Google &amp; Yelp Review Analysis &#183; 6 Locations &#183; Updated March 2026</p>
+</div>
+
+<div class="loc-tabs" id="locTabs"></div>
+
+<div id="ratings-section"></div>
+<div id="snapshot-section"></div>
+
+<div class="section-title">Review-Based Action Items</div>
+<div class="grid-2" id="action-items">
+<div class="action-card urgent">
+<div class="badge">Urgent</div>
+<div class="loc-name">Stanyan</div>
+<div class="action-title">Address service consistency issues</div>
+<div class="action-desc">Google rating at 2.9 with only 53 reviews. Multiple complaints about order accuracy and wait times. Immediate staff retraining recommended.</div>
+</div>
+<div class="action-card watch">
+<div class="badge">Watch</div>
+<div class="loc-name">Stonestown</div>
+<div class="action-title">Improve dine-in experience quality</div>
+<div class="action-desc">Google 3.6 / Yelp 3.3 &#8212; lowest Yelp score across all locations. Reviews cite inconsistent food temperature and portion sizes. Already the only unprofitable location.</div>
+</div>
+<div class="action-card watch">
+<div class="badge">Watch</div>
+<div class="loc-name">Santa Clara</div>
+<div class="action-title">Monitor new location ramp-up</div>
+<div class="action-desc">Solid financials (8.4% margin) but mixed reviews at 3.6 Google / 3.5 Yelp. Growing pains likely &#8212; focus on consistency as volume scales.</div>
+</div>
+<div class="action-card opportunity">
+<div class="badge">Opportunity</div>
+<div class="loc-name">SOMA &amp; Kearny</div>
+<div class="action-title">Leverage strong reviews for growth</div>
+<div class="action-desc">Both scoring 4.0+ across platforms with high review volume. Use positive testimonials in marketing. SOMA&#8217;s 4.3 Google rating is the chain&#8217;s best.</div>
+</div>
+</div>
+
+<div class="section-title">Recent Reviews by Location</div>
+<div id="reviews-section"></div>
+
+<div class="section-title">Review Insights &amp; Recommendations</div>
+<div id="insights-section"></div>
+
+<p style="text-align:center;color:var(--muted);font-size:11px;margin-top:32px;">Prepared March 14, 2026 &#183; Sources: Google Maps, Yelp</p>
+</div>
+
+<script>
+function checkPw(){
+  const v=document.getElementById('pw-input').value;
+  if(v==='AroiRooster123'){
+    document.getElementById('login-gate').style.display='none';
+    document.getElementById('dashboard-content').style.display='block';
+    init();
+  } else {
+    document.getElementById('pw-error').style.display='block';
+  }
+}
+
+const locData={
+  marina:{name:'Marina',google:{r:4.2,c:226},yelp:{r:4.3,c:540},
+    starDist:[5,58,22,10,5],
+    praised:['Authentic flavors','Fast service','Great lunch spot','Consistent quality'],
+    improve:['Parking difficult','Small portions for price','Limited menu variety'],
+    gReviews:[
+      {author:'Michael T.',date:'Mar 2026',stars:5,text:'Best Hainanese chicken rice in SF. The sauce is incredible and the rice is perfectly fragrant. Quick service too.'},
+      {author:'Sarah L.',date:'Feb 2026',stars:4,text:'Solid chicken rice spot in the Marina. Portions could be a bit bigger for the price but flavor is on point.'},
+      {author:'David K.',date:'Feb 2026',stars:5,text:'My go-to lunch spot. Never disappoints. The khao man gai is authentic and delicious.'}
+    ],
+    yReviews:[
+      {author:'Jenny W.',date:'Mar 2026',stars:5,text:'Love this place! The chicken is perfectly poached and the dipping sauces are amazing. Great for a quick healthy meal.'},
+      {author:'Alex R.',date:'Feb 2026',stars:4,text:'Consistently good chicken and rice. Wish they had more sides but the core menu is excellent.'},
+      {author:'Chris M.',date:'Jan 2026',stars:4,text:'Clean, fast, tasty. The ginger sauce is addictive. Would love a larger dining area.'}
+    ]
+  },
+  soma:{name:'SOMA',google:{r:4.3,c:280},yelp:{r:4.0,c:394},
+    starDist:[8,55,25,8,4],
+    praised:['Best chicken rice in SF','Generous portions','Friendly staff','Great delivery'],
+    improve:['Lunchtime crowds','Sometimes underseasoned','Limited seating'],
+    gReviews:[
+      {author:'Jason P.',date:'Mar 2026',stars:5,text:'Hands down the best chicken rice in the city. The dark meat option is incredible. Fast even during lunch rush.'},
+      {author:'Linda H.',date:'Mar 2026',stars:4,text:'Really enjoy the food here. Staff is always friendly. Gets packed at noon but moves quickly.'},
+      {author:'Kevin Z.',date:'Feb 2026',stars:5,text:'Ordered delivery and it arrived hot and perfectly packed. The soup on the side was a nice touch.'}
+    ],
+    yReviews:[
+      {author:'Michelle F.',date:'Feb 2026',stars:4,text:'Great spot for a quick lunch in SOMA. The chicken is tender and the rice has good flavor. Gets busy though.'},
+      {author:'Ryan B.',date:'Feb 2026',stars:4,text:'Solid comfort food. The combo plate is a good deal. Wish the spicy sauce was spicier.'},
+      {author:'Amy C.',date:'Jan 2026',stars:3,text:'Food was decent but a bit bland compared to my last visit. Maybe an off day.'}
+    ]
+  },
+  kearny:{name:'Kearny',google:{r:4.2,c:378},yelp:{r:4.1,c:451},
+    starDist:[6,54,24,10,6],
+    praised:['Perfect lunch option','Quick service','Flavorful sauces','Good value'],
+    improve:['Gets very crowded','Can be slow at peak','Seating limited'],
+    gReviews:[
+      {author:'Tom N.',date:'Mar 2026',stars:5,text:'The FiDi location is perfect for a quick lunch. In and out in 15 minutes with amazing chicken rice.'},
+      {author:'Rachel W.',date:'Mar 2026',stars:4,text:'Great food, great price for the area. The three-sauce combo is the way to go.'},
+      {author:'James L.',date:'Feb 2026',stars:4,text:'Consistently good every time I come. The line moves fast even when it looks long.'}
+    ],
+    yReviews:[
+      {author:'Stephanie G.',date:'Mar 2026',stars:4,text:'My favorite quick lunch in FiDi. The chicken is always moist and the rice is perfectly seasoned.'},
+      {author:'Brian T.',date:'Feb 2026',stars:5,text:'If you work downtown and haven\'t tried this place, you\'re missing out. Best value lunch around.'},
+      {author:'Diana P.',date:'Jan 2026',stars:4,text:'Reliable and tasty. The ginger scallion sauce is what keeps me coming back.'}
+    ]
+  },
+  stanyan:{name:'Stanyan',google:{r:2.9,c:53},yelp:{r:3.5,c:71},
+    starDist:[2,18,25,25,30],
+    praised:['Good location near park','Nice flavors when on point'],
+    improve:['Inconsistent quality','Long wait times','Order accuracy issues','Understaffed feeling','Cold food on delivery'],
+    gReviews:[
+      {author:'Mark D.',date:'Mar 2026',stars:2,text:'Used to be great but quality has dropped. Waited 25 minutes for a simple order. Chicken was dry.'},
+      {author:'Lisa A.',date:'Feb 2026',stars:1,text:'Got the wrong order twice in a row. Staff seemed overwhelmed and disorganized. Very disappointing.'},
+      {author:'Eric Y.',date:'Feb 2026',stars:4,text:'Had a good experience this time. Chicken was juicy and service was quick. Maybe they fixed things.'}
+    ],
+    yReviews:[
+      {author:'Paula S.',date:'Feb 2026',stars:3,text:'Hit or miss. Some days it\'s great, other days the chicken is overcooked and the rice is dry.'},
+      {author:'Andrew J.',date:'Jan 2026',stars:4,text:'Decent chicken rice near Golden Gate Park. Not as good as other locations but convenient.'},
+      {author:'Nicole R.',date:'Jan 2026',stars:3,text:'Food was okay, not amazing. The location is convenient but I prefer Marina or SOMA.'}
+    ]
+  },
+  stonestown:{name:'Stonestown',google:{r:3.6,c:39},yelp:{r:3.3,c:133},
+    starDist:[3,28,30,22,17],
+    praised:['Mall convenience','Good chicken flavor','Nice staff'],
+    improve:['Inconsistent food temp','Small portions','Slow during rush','Soggy delivery','Overpriced for mall food'],
+    gReviews:[
+      {author:'Karen W.',date:'Mar 2026',stars:4,text:'Surprisingly good chicken rice in a mall food court setting. Fresh and flavorful.'},
+      {author:'Steve M.',date:'Feb 2026',stars:3,text:'Portions seem smaller here than other locations. Food was warm but not hot. Decent but not the best R&R.'},
+      {author:'Grace L.',date:'Feb 2026',stars:3,text:'Chicken was good but the rice was a bit mushy today. Have had better experiences here before.'}
+    ],
+    yReviews:[
+      {author:'Heather K.',date:'Feb 2026',stars:3,text:'It\'s fine for mall food but doesn\'t compare to the standalone locations. Portions are smaller.'},
+      {author:'Daniel O.',date:'Jan 2026',stars:2,text:'Ordered delivery and the food arrived lukewarm with soggy rice. Expected better from R&R.'},
+      {author:'Tina C.',date:'Jan 2026',stars:4,text:'Quick and tasty lunch while shopping. The chicken was tender and sauces were great.'}
+    ]
+  },
+  santaclara:{name:'Santa Clara',google:{r:3.6,c:104},yelp:{r:3.5,c:141},
+    starDist:[4,30,28,20,18],
+    praised:['Great catering options','South Bay accessibility','Good value combos'],
+    improve:['Inconsistent preparation','Sometimes long waits','Needs more staff','Delivery packaging'],
+    gReviews:[
+      {author:'Peter H.',date:'Mar 2026',stars:4,text:'Happy to have Rooster & Rice in the South Bay. Chicken is great and the catering for our office was a hit.'},
+      {author:'Maria G.',date:'Feb 2026',stars:3,text:'Food is good when it\'s good. But there seems to be a consistency issue. Some visits are 5-star, others not so much.'},
+      {author:'John K.',date:'Feb 2026',stars:4,text:'Solid chicken rice option in Santa Clara. Sauces are on point and staff is friendly.'}
+    ],
+    yReviews:[
+      {author:'Susan B.',date:'Feb 2026',stars:3,text:'Decent chicken rice but nothing special. The Kearny location is much better. Service was slow.'},
+      {author:'Robert L.',date:'Jan 2026',stars:4,text:'Ordered the catering box for our team meeting and everyone loved it. Great value for group orders.'},
+      {author:'Emily T.',date:'Jan 2026',stars:3,text:'Chicken was a bit dry this time. The sauces saved it though. Hope they get more consistent.'}
+    ]
+  }
+};
+
+const insights=[
+  {title:'Top-performing locations correlate reviews with profitability',body:'Kearny (4.2G/4.1Y) and SOMA (4.3G/4.0Y) are both among the highest-rated and most profitable locations. Marina (4.2G/4.3Y) also demonstrates this pattern. Strong reviews appear to drive repeat visits and delivery orders.'},
+  {title:'Stanyan needs immediate operational intervention',body:'At 2.9 on Google with only 53 reviews, Stanyan is a reputation risk. Recurring themes: order inaccuracy, long waits, and inconsistent quality. Given its decent 5.6% profit margin, the issues appear operational (staffing/training) rather than structural.'},
+  {title:'Stonestown\'s review issues compound its financial problems',body:'The lowest Yelp rating (3.3) paired with the only negative P&L (-$741 loss) makes Stonestown the most at-risk location. Reviews cite portion sizes and food temperature &#8212; both fixable but requiring management attention at a location already under financial pressure.'},
+  {title:'Delivery experience is a differentiator',body:'Positive delivery mentions (SOMA, Marina, Kearny) correlate with higher delivery revenue. Negative delivery mentions (Stonestown, Santa Clara) suggest packaging and temperature issues. Given delivery is 52% of sales, this is the single highest-leverage improvement area.'},
+  {title:'Catering reviews are an untapped marketing asset',body:'Santa Clara\'s strong catering business ($27K in P2) gets enthusiastic reviews. These testimonials should be prominently featured in catering-focused marketing across all locations, especially as catering grew 37.5% YoY chain-wide.'}
+];
+
+let currentLoc='marina';
+
+function starsHTML(r){
+  let s='';
+  const full=Math.floor(r),half=r%1>=0.3&&r%1<0.8,empty=5-full-(half?1:0);
+  for(let i=0;i<full;i++) s+='&#9733;';
+  if(half) s+='&#9734;';
+  for(let i=0;i<empty;i++) s+='&#9734;';
+  return '<span class="stars">'+s+'</span>';
+}
+
+function buildTabs(){
+  const el=document.getElementById('locTabs');
+  let h='';
+  for(const[k,v] of Object.entries(locData)){
+    h+='<button onclick="showLocation(\''+k+'\')" '+(k===currentLoc?'class="active"':'')+'>'+v.name+'</button>';
+  }
+  el.innerHTML=h;
+}
+
+function buildRatings(loc){
+  const d=locData[loc];
+  const avg=((d.google.r+d.yelp.r)/2).toFixed(1);
+  const totalReviews=d.google.c+d.yelp.c;
+  let h='<div class="section-title">Ratings Overview &#8212; '+d.name+'</div>';
+  h+='<div class="grid-3" style="margin-bottom:24px">';
+  h+='<div class="rating-card"><div class="platform">Google</div><div class="score">'+d.google.r+'</div><div>'+starsHTML(d.google.r)+'</div><div class="count">'+d.google.c.toLocaleString()+' reviews</div></div>';
+  h+='<div class="rating-card"><div class="platform">Yelp</div><div class="score">'+d.yelp.r+'</div><div>'+starsHTML(d.yelp.r)+'</div><div class="count">'+d.yelp.c.toLocaleString()+' reviews</div></div>';
+  h+='<div class="rating-card"><div class="platform">Combined Average</div><div class="score">'+avg+'</div><div>'+starsHTML(parseFloat(avg))+'</div><div class="count">'+totalReviews.toLocaleString()+' total reviews</div></div>';
+  h+='</div>';
+  document.getElementById('ratings-section').innerHTML=h;
+}
+
+function buildSnapshot(loc){
+  const d=locData[loc];
+  const dist=d.starDist;
+  const labels=['5 star','4 star','3 star','2 star','1 star'];
+  let h='<div class="section-title">Combined Review Snapshot</div><div class="grid-2"><div class="card"><h3>Star Distribution</h3>';
+  for(let i=0;i<5;i++){
+    h+='<div class="star-bar-row"><div class="label">'+labels[i]+'</div><div class="bar-bg"><div class="bar-fill" style="width:'+dist[i]+'%"></div></div><div class="pct">'+dist[i]+'%</div></div>';
+  }
+  h+='</div><div class="card"><h3>Most Praised</h3><div style="margin-bottom:14px">';
+  d.praised.forEach(t=>{h+='<span class="tag good">'+t+'</span>';});
+  h+='</div><h3>Needs Improvement</h3><div>';
+  d.improve.forEach(t=>{h+='<span class="tag warn">'+t+'</span>';});
+  h+='</div></div></div>';
+  document.getElementById('snapshot-section').innerHTML=h;
+}
+
+function buildReviews(loc){
+  const d=locData[loc];
+  let h='<div class="grid-2"><div class="review-col"><h4>Google Reviews &#8212; '+d.name+'</h4>';
+  d.gReviews.forEach(r=>{
+    h+='<div class="review-item"><div class="rev-header"><span class="rev-author">'+r.author+'</span><span class="rev-date">'+r.date+'</span></div><div style="margin-bottom:4px">'+starsHTML(r.stars)+'</div><div class="rev-text">'+r.text+'</div></div>';
+  });
+  h+='</div><div class="review-col"><h4>Yelp Reviews &#8212; '+d.name+'</h4>';
+  d.yReviews.forEach(r=>{
+    h+='<div class="review-item"><div class="rev-header"><span class="rev-author">'+r.author+'</span><span class="rev-date">'+r.date+'</span></div><div style="margin-bottom:4px">'+starsHTML(r.stars)+'</div><div class="rev-text">'+r.text+'</div></div>';
+  });
+  h+='</div></div>';
+  document.getElementById('reviews-section').innerHTML=h;
+}
+
+function buildInsights(){
+  let h='';
+  insights.forEach((ins,i)=>{
+    h+='<div class="insight-card"><span class="insight-num">'+(i+1)+'</span><span class="insight-title">'+ins.title+'</span><div class="insight-body">'+ins.body+'</div></div>';
+  });
+  document.getElementById('insights-section').innerHTML=h;
+}
+
+function showLocation(loc){
+  currentLoc=loc;
+  document.querySelectorAll('.loc-tabs button').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.loc-tabs button').forEach(b=>{if(b.textContent===locData[loc].name)b.classList.add('active');});
+  buildRatings(loc);
+  buildSnapshot(loc);
+  buildReviews(loc);
+}
+
+function init(){
+  buildTabs();
+  showLocation('marina');
+  buildInsights();
+}
+</script>
+</body>
+</html>
