@@ -239,9 +239,9 @@ const locData={
 const insights=[
   {title:'Top-performing locations correlate reviews with profitability',body:'Kearny (4.3G/4.1Y) and SOMA (4.3G/4.0Y) are both among the highest-rated and most profitable locations. Marina (4.3G/4.2Y) also demonstrates this pattern. All three core locations now match at 4.3 on Google &#8212; strong reviews appear to drive repeat visits and delivery orders.'},
   {title:'Stanyan needs immediate operational intervention',body:'At 3.0 on Google with only 56 reviews, Stanyan remains a reputation risk. Recurring themes: order inaccuracy, long waits, and inconsistent quality. Some recent positive reviews suggest slight improvement, but the 3.0 rating still trails the chain average significantly.'},
-  {title:'Stonestown\\'s review issues compound its financial problems',body:'The lowest Yelp rating (3.3) paired with the only negative P&L (-$741 loss) makes Stonestown the most at-risk location. Reviews cite portion sizes and food temperature &#8212; both fixable but requiring management attention at a location already under financial pressure.'},
+  {title:'Stonestown\'s review issues compound its financial problems',body:'The lowest Yelp rating (3.3) paired with the only negative P&L (-$741 loss) makes Stonestown the most at-risk location. Reviews cite portion sizes and food temperature &#8212; both fixable but requiring management attention at a location already under financial pressure.'},
   {title:'Delivery experience is a differentiator',body:'Positive delivery mentions (SOMA, Marina, Kearny) correlate with higher delivery revenue. Negative delivery mentions (Stonestown, Santa Clara) suggest packaging and temperature issues. Given delivery is 52% of sales, this is the single highest-leverage improvement area.'},
-  {title:'Catering reviews are an untapped marketing asset',body:'Santa Clara\\'s strong catering business ($27K in P2) gets enthusiastic reviews. These testimonials should be prominently featured in catering-focused marketing across all locations, especially as catering grew 37.5% YoY chain-wide.'}
+  {title:'Catering reviews are an untapped marketing asset',body:'Santa Clara\'s strong catering business ($27K in P2) gets enthusiastic reviews. These testimonials should be prominently featured in catering-focused marketing across all locations, especially as catering grew 37.5% YoY chain-wide.'}
 ];
 
 let currentLoc='marina';
@@ -271,7 +271,7 @@ function buildRatings(loc){
   let h='<div class="section-title">Ratings Overview &#8212; '+d.name+'</div>';
   h+='<div class="grid-3" style="margin-bottom:24px">';
   h+='<div class="rating-card"><div class="platform">Google</div><div class="score">'+d.google.r+'</div><div>'+starsHTML(d.google.r)+'</div><div class="count">'+d.google.c.toLocaleString()+' reviews</div></div>';
-  h+='<div class="rating-card"><div class="platform">Yelp</div><div class="score">'+d.yelp.r('</div><div>'+starsHTML(d.yelp.r)+'</div><div class="count">'+d.yelp.c.toLocaleString()+' reviews</div></div>';
+  h+='<div class="rating-card"><div class="platform">Yelp</div><div class="score">'+d.yelp.r+'</div><div>'+starsHTML(d.yelp.r)+'</div><div class="count">'+d.yelp.c.toLocaleString()+' reviews</div></div>';
   h+='<div class="rating-card"><div class="platform">Combined Average</div><div class="score">'+avg+'</div><div>'+starsHTML(parseFloat(avg))+'</div><div class="count">'+totalReviews.toLocaleString()+' total reviews</div></div>';
   h+='</div>';
   document.getElementById('ratings-section').innerHTML=h;
@@ -327,5 +327,8 @@ function showLocation(loc){
 function init(){
   buildTabs();
   showLocation('marina');
-  buildInsightÊ
-NÂBÜØÜ\ØÙOÚ[
+  buildInsights();
+}
+</script>
+</body>
+</html>
