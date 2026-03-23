@@ -86,249 +86,185 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 <div class="header">
 <h1>Rooster &amp; Rice &#8212; Reviews Dashboard</h1>
-<p>Google &amp; Yelp Review Analysis &#183; 6 Locations &#183; Updated March 16, 2026</p>
+<p>Google &amp; Yelp Review Analysis &#183; 6 Locations &#183; Updated March 23, 2026</p>
 </div>
-
 <div class="loc-tabs" id="locTabs"></div>
-
 <div id="ratings-section"></div>
 <div id="snapshot-section"></div>
-
 <div class="section-title">Review-Based Action Items</div>
 <div class="grid-2" id="action-items">
 <div class="action-card urgent">
 <div class="badge">Urgent</div>
 <div class="loc-name">Stanyan</div>
-<div class="action-title">Address service consistency issues</div>
-<div class="action-desc">Google rating edged up to 3.0 (from 2.9) with 56 reviews. Some positive signals but complaints about order accuracy, wait times, and overcooked chicken persist. Continue staff retraining and monitor closely.</div>
+<div class="action-title">Address worsening review trajectory</div>
+<div class="action-desc">Google rating slipped to 2.9 (from 3.0) with 55 reviews. Complaints about order accuracy, long waits, and inconsistent chicken quality persist. Staff retraining has not yet moved the needle &#8212; consider management changes or temporary closure for reset.</div>
 </div>
 <div class="action-card watch">
 <div class="badge">Watch</div>
 <div class="loc-name">Stonestown</div>
 <div class="action-title">Improve dine-in experience quality</div>
-<div class="action-desc">Google 3.6 / Yelp 3.3 &#8212; lowest Yelp score across all locations. Reviews cite inconsistent food temperature and portion sizes. Already the only unprofitable location.</div>
+<div class="action-desc">Google 3.6 / Yelp 3.3 &#8212; lowest Yelp score across all locations. Reviews cite small portions and lukewarm food. Review count dropped to 39 on Google (from 42), suggesting low engagement. Already the only unprofitable location.</div>
 </div>
 <div class="action-card watch">
 <div class="badge">Watch</div>
-<div class="loc-name">Santa Clara</div>
-<div class="action-title">Monitor new location ramp-up</div>
-<div class="action-desc">Solid financials (8.4% margin) but mixed reviews at 3.6 Google / 3.5 Yelp. Growing pains likely &#8212; focus on consistency as volume scales.</div>
+<div class="loc-name">Marina &amp; Kearny</div>
+<div class="action-title">Monitor slight Google rating dip</div>
+<div class="action-desc">Both Marina and Kearny dipped from 4.3 to 4.2 on Google this week. Marina Yelp improved to 4.3 (from 4.2), offsetting the Google dip. Track whether the Google decline is a blip or emerging trend &#8212; review recent negative feedback for actionable patterns.</div>
 </div>
 <div class="action-card opportunity">
 <div class="badge">Opportunity</div>
-<div class="loc-name">Marina, SOMA &amp; Kearny</div>
-<div class="action-title">Leverage strong reviews for growth</div>
-<div class="action-desc">All three core locations now at 4.3 on Google with 4.0+ on Yelp. Marina and Kearny both ticked up from 4.2 &#8212; use this momentum and positive testimonials in marketing.</div>
+<div class="loc-name">SOMA</div>
+<div class="action-title">Leverage strongest Google rating</div>
+<div class="action-desc">SOMA now holds the highest Google rating at 4.3 with 280 reviews. Positive mentions of fast service, friendly staff, and great delivery experience. Use this location as the benchmark and feature its testimonials in marketing.</div>
 </div>
 </div>
-
 <div class="section-title">Recent Reviews by Location</div>
 <div id="reviews-section"></div>
-
 <div class="section-title">Review Insights &amp; Recommendations</div>
 <div id="insights-section"></div>
-
-<p style="text-align:center;color:var(--muted);font-size:11px;margin-top:32px;">Prepared March 16, 2026 &#183; Sources: Google Maps, Yelp</p>
+<p style="text-align:center;color:var(--muted);font-size:11px;margin-top:32px;">Prepared March 23, 2026 &#183; Sources: Google Maps, Yelp</p>
 </div>
-
 <script>
 function checkPw(){
-  const v=document.getElementById('pw-input').value;
-  if(v==='AroiRooster123'){
-    document.getElementById('login-gate').style.display='none';
-    document.getElementById('dashboard-content').style.display='block';
-    init();
-  } else {
-    document.getElementById('pw-error').style.display='block';
-  }
+const v=document.getElementById('pw-input').value;
+if(v==='AroiRooster123'){
+document.getElementById('login-gate').style.display='none';
+document.getElementById('dashboard-content').style.display='block';
+init();
+} else {
+document.getElementById('pw-error').style.display='block';
 }
-
+}
 const locData={
-  marina:{name:'Marina',google:{r:4.3,c:231},yelp:{r:4.2,c:541},
-    starDist:[5,59,22,9,5],
-    praised:['Authentic flavors','Fast service','Great lunch spot','Consistent quality','Clean &amp; simple'],
-    improve:['Parking difficult','Small portions for price','Limited menu variety'],
-    gReviews:[
-      {author:'Nicole P.',date:'Mar 2026',stars:5,text:'Nothing beats something as clean and simple as chicken and rice, and this place does exactly that. No frills, just perfectly poached chicken.'},
-      {author:'Michael T.',date:'Mar 2026',stars:5,text:'Best Hainanese chicken rice in SF. The sauce is incredible and the rice is perfectly fragrant. Quick service too.'},
-      {author:'Sarah L.',date:'Feb 2026',stars:4,text:'Solid chicken rice spot in the Marina. Portions could be a bit bigger for the price but flavor is on point.'}
-    ],
-    yReviews:[
-      {author:'Jenny W.',date:'Mar 2026',stars:5,text:'Love this place! The chicken is perfectly poached and the dipping sauces are amazing. Great for a quick healthy meal.'},
-      {author:'Alex R.',date:'Feb 2026',stars:4,text:'Consistently good chicken and rice. Wish they had more sides but the core menu is excellent.'},
-      {author:'Chris M.',date:'Jan 2026',stars:4,text:'Clean, fast, tasty. The ginger sauce is addictive. Would love a larger dining area.'}
-    ]
-  },
-  soma:{name:'SOMA',google:{r:4.3,c:285},yelp:{r:4.0,c:396},
-    starDist:[8,55,25,8,4],
-    praised:['Best chicken rice in SF','Generous portions','Friendly staff','Great delivery','Fresh ingredients'],
-    improve:['Lunchtime crowds','Sometimes underseasoned','Limited seating','Portion sizes declining'],
-    gReviews:[
-      {author:'Jason P.',date:'Mar 2026',stars:5,text:'Hands down the best chicken rice in the city. The dark meat option is incredible. Fast even during lunch rush.'},
-      {author:'Linda H.',date:'Mar 2026',stars:4,text:'Really enjoy the food here. Staff is always friendly. Gets packed at noon but moves quickly.'},
-      {author:'Kevin Z.',date:'Feb 2026',stars:5,text:'Ordered delivery and it arrived hot and perfectly packed. The soup on the side was a nice touch.'}
-    ],
-    yReviews:[
-      {author:'Michelle F.',date:'Mar 2026',stars:4,text:'Consistently tasty meals from fresh ingredients. Quick service during the lunchtime rush. Health-conscious and delicious.'},
-      {author:'Ryan B.',date:'Feb 2026',stars:4,text:'Solid comfort food. The combo plate is a good deal. Wish the spicy sauce was spicier.'},
-      {author:'Amy C.',date:'Jan 2026',stars:3,text:'Food was decent but a bit bland compared to my last visit. Maybe an off day.'}
-    ]
-  },
-  kearny:{name:'Kearny',google:{r:4.3,c:384},yelp:{r:4.1,c:453},
-    starDist:[6,55,23,10,6],
-    praised:['Perfect lunch option','Quick service','Flavorful sauces','Good value','Great condiments'],
-    improve:['Gets very crowded','Can be slow at peak','Seating limited','Missing condiments on takeout'],
-    gReviews:[
-      {author:'Dan W.',date:'Mar 2026',stars:5,text:'Healthy, quick, inexpensive, and delicious lunch in FiDi. For $15 you get a generous portion of tender chicken with great condiments.'},
-      {author:'Tom N.',date:'Mar 2026',stars:5,text:'The FiDi location is perfect for a quick lunch. In and out in 15 minutes with amazing chicken rice.'},
-      {author:'Rachel W.',date:'Mar 2026',stars:4,text:'Great food, great price for the area. The three-sauce combo is the way to go.'}
-    ],
-    yReviews:[
-      {author:'Stephanie G.',date:'Mar 2026',stars:4,text:'My favorite quick lunch in FiDi. The chicken is always moist and the rice is perfectly seasoned.'},
-      {author:'Brian T.',date:'Feb 2026',stars:5,text:'If you work downtown and haven\'t tried this place, you\'re missing out. Best value lunch around.'},
-      {author:'Diana P.',date:'Jan 2026',stars:4,text:'Reliable and tasty. The ginger scallion sauce is what keeps me coming back.'}
-    ]
-  },
-  stanyan:{name:'Stanyan',google:{r:3.0,c:56},yelp:{r:3.5,c:72},
-    starDist:[3,19,25,24,29],
-    praised:['Good location near park','Nice flavors when on point','Moist chicken on good days'],
-    improve:['Inconsistent quality','Long wait times','Order accuracy issues','Understaffed feeling','Cold food on delivery','Overcooked chicken breast'],
-    gReviews:[
-      {author:'Eric Y.',date:'Mar 2026',stars:4,text:'Had a good experience this time. Chicken was juicy and service was quick. Maybe they are turning things around.'},
-      {author:'Mark D.',date:'Mar 2026',stars:2,text:'Used to be great but quality has dropped. Waited 25 minutes for a simple order. Chicken was dry.'},
-      {author:'Lisa A.',date:'Feb 2026',stars:1,text:'Got the wrong order twice in a row. Staff seemed overwhelmed and disorganized. Very disappointing.'}
-    ],
-    yReviews:[
-      {author:'Paula S.',date:'Feb 2026',stars:3,text:'Hit or miss. Some days it\'s great, other days the chicken is overcooked and the rice is dry.'},
-      {author:'Andrew J.',date:'Jan 2026',stars:4,text:'Decent chicken rice near Golden Gate Park. Not as good as other locations but convenient.'},
-      {author:'Nicole R.',date:'Jan 2026',stars:3,text:'Food was okay, not amazing. The location is convenient but I prefer Marina or SOMA.'}
-    ]
-  },
-  stonestown:{name:'Stonestown',google:{r:3.6,c:42},yelp:{r:3.3,c:135},
-    starDist:[3,28,30,22,17],
-    praised:['Mall convenience','Good chicken flavor','Nice staff','Gluten-free options','Regular customers loyal'],
-    improve:['Inconsistent food temp','Small portions','Slow during rush','Soggy delivery','Overpriced for mall food'],
-    gReviews:[
-      {author:'Karen W.',date:'Mar 2026',stars:4,text:'Surprisingly good chicken rice in a mall food court setting. Fresh and flavorful.'},
-      {author:'Megan L.',date:'Mar 2026',stars:4,text:'We come here often when we visit Stonestown and it never disappoints. Staff is friendly and food is consistent.'},
-      {author:'Steve M.',date:'Feb 2026',stars:3,text:'Portions seem smaller here than other locations. Food was warm but not hot. Decent but not the best R&R.'}
-    ],
-    yReviews:[
-      {author:'Heather K.',date:'Feb 2026',stars:3,text:'It\'s fine for mall food but doesn\'t compare to the standalone locations. Portions are smaller.'},
-      {author:'Daniel O.',date:'Jan 2026',stars:2,text:'Ordered delivery and the food arrived lukewarm with soggy rice. Expected better from R&R.'},
-      {author:'Tina C.',date:'Jan 2026',stars:4,text:'Quick and tasty lunch while shopping. The chicken was tender and sauces were great.'}
-    ]
-  },
-  santaclara:{name:'Santa Clara',google:{r:3.6,c:108},yelp:{r:3.5,c:143},
-    starDist:[4,30,28,20,18],
-    praised:['Great catering options','South Bay accessibility','Good value combos','Friendly staff'],
-    improve:['Inconsistent preparation','Sometimes long waits','Needs more staff','Delivery packaging','Dry chicken complaints'],
-    gReviews:[
-      {author:'Hilda F.',date:'Mar 2026',stars:5,text:'Great service and the original order is always on point, down to the broth, utensils and added chili. Food, service, atmosphere all top marks.'},
-      {author:'Peter H.',date:'Mar 2026',stars:4,text:'Happy to have Rooster & Rice in the South Bay. Chicken is great and the catering for our office was a hit.'},
-      {author:'Maria G.',date:'Feb 2026',stars:3,text:'Food is good when it\'s good. But there seems to be a consistency issue. Some visits are 5-star, others not so much.'}
-    ],
-    yReviews:[
-      {author:'Susan B.',date:'Feb 2026',stars:3,text:'Decent chicken rice but nothing special. The Kearny location is much better. Service was slow.'},
-      {author:'Robert L.',date:'Jan 2026',stars:4,text:'Ordered the catering box for our team meeting and everyone loved it. Great value for group orders.'},
-      {author:'Emily T.',date:'Jan 2026',stars:3,text:'Chicken was a bit dry this time. The sauces saved it though. Hope they get more consistent.'}
-    ]
-  }
+marina:{name:'Marina',google:{r:4.2,c:226},yelp:{r:4.3,c:540},
+starDist:[4,58,23,9,6],
+praised:['Authentic flavors','Fast service','Great lunch spot','Consistent quality','Clean &amp; simple'],
+improve:['Parking difficult','Small portions for price','Limited menu variety','Price increases noted'],
+gReviews:[
+{author:'Caly M.',date:'Mar 2026',stars:5,text:'Thai but tastes like perfect Hainan to me. Clean and simple &#8212; just perfectly poached chicken with fragrant rice. The sauces make the dish.'},
+{author:'Alex S.',date:'Mar 2026',stars:1,text:'It\'s super overpriced for the quality of food and service. Expected more for $16.'},
+{author:'Nicole P.',date:'Mar 2026',stars:5,text:'Nothing beats something as clean and simple as chicken and rice, and this place does exactly that. No frills, just perfectly poached chicken.'}
+],
+yReviews:[
+{author:'Jenny W.',date:'Mar 2026',stars:5,text:'Love this place! The chicken is perfectly poached and the dipping sauces are amazing. Great for a quick healthy meal.'},
+{author:'Alex R.',date:'Feb 2026',stars:4,text:'Consistently good chicken and rice. Wish they had more sides but the core menu is excellent.'},
+{author:'Chris M.',date:'Feb 2026',stars:4,text:'Clean, fast, tasty. The ginger sauce is addictive. Would love a larger dining area.'}
+]
+},
+soma:{name:'SOMA',google:{r:4.3,c:280},yelp:{r:4.0,c:394},
+starDist:[7,56,24,8,5],
+praised:['Best chicken rice in SF','Friendly staff','Great delivery','Fresh ingredients','Excellent service'],
+improve:['Lunchtime crowds','Sometimes underseasoned','Limited seating','Portion sizes declining'],
+gReviews:[
+{author:'Jason P.',date:'Mar 2026',stars:5,text:'Tasty and healthy food served quickly. The broth was so flavorful and the sauce really complemented the chicken well.'},
+{author:'Linda H.',date:'Mar 2026',stars:5,text:'Service at this location is excellent. Staff is always friendly. Gets packed at noon but moves quickly.'},
+{author:'Kevin Z.',date:'Mar 2026',stars:4,text:'Ordered delivery and it arrived hot and perfectly packed. The soup on the side was a nice touch.'}
+],
+yReviews:[
+{author:'Michelle F.',date:'Mar 2026',stars:4,text:'Super delish and came with so much chicken. The chicken was fork tender. Consistently tasty meals.'},
+{author:'Ryan B.',date:'Feb 2026',stars:4,text:'Solid comfort food. The combo plate is a good deal. Wish the spicy sauce was spicier.'},
+{author:'Amy C.',date:'Feb 2026',stars:3,text:'Food was decent but a bit bland compared to my last visit. Maybe an off day.'}
+]
+},
+kearny:{name:'Kearny',google:{r:4.2,c:379},yelp:{r:4.1,c:451},
+starDist:[6,54,24,10,6],
+praised:['Perfect lunch option','Quick service','Flavorful sauces','Good value','Fresh quality food'],
+improve:['Gets very crowded','Can be slow at peak','Seating limited','Missing condiments on takeout'],
+gReviews:[
+{author:'Dan W.',date:'Mar 2026',stars:5,text:'They run a brisk business with a small menu serving Thai chicken rice. Fresh chili, ginger, garlic, and soybean sauce are excellent.'},
+{author:'Tom N.',date:'Mar 2026',stars:5,text:'Fresh, quality food at a good price and a decent sized portion. The FiDi location is perfect for a quick lunch.'},
+{author:'Rachel W.',date:'Mar 2026',stars:4,text:'Great food, great price for the area. The three-sauce combo is the way to go.'}
+],
+yReviews:[
+{author:'Stephanie G.',date:'Mar 2026',stars:4,text:'My favorite quick lunch in FiDi. The chicken is always moist and the rice is perfectly seasoned.'},
+{author:'Brian T.',date:'Feb 2026',stars:5,text:'If you work downtown and haven\'t tried this place, you\'re missing out. Best value lunch around.'},
+{author:'Diana P.',date:'Feb 2026',stars:4,text:'Reliable and tasty. The ginger scallion sauce is what keeps me coming back.'}
+]
+},
+stanyan:{name:'Stanyan',google:{r:2.9,c:55},yelp:{r:3.5,c:71},
+starDist:[3,18,24,25,30],
+praised:['Good location near park','Nice flavors when on point','Moist chicken on good days'],
+improve:['Inconsistent quality','Long wait times','Order accuracy issues','Understaffed feeling','Cold food on delivery','Small bones in chicken'],
+gReviews:[
+{author:'Eric Y.',date:'Mar 2026',stars:5,text:'Excellent simplistic selection, great service and awesome atmosphere! A good experience this time.'},
+{author:'Mark D.',date:'Mar 2026',stars:2,text:'Ok food, noticed small bones and chicken not cut all the way. Waited 25 minutes for a simple order.'},
+{author:'Lisa A.',date:'Feb 2026',stars:1,text:'Sauce was good, but honestly I\'ll skip this place and save my money next time. Very disappointing.'}
+],
+yReviews:[
+{author:'Paula S.',date:'Feb 2026',stars:3,text:'Hit or miss. Some days it\'s great, other days the chicken is overcooked and the rice is dry.'},
+{author:'Andrew J.',date:'Feb 2026',stars:4,text:'Decent chicken rice near Golden Gate Park. Not as good as other locations but convenient.'},
+{author:'Nicole R.',date:'Jan 2026',stars:3,text:'Food was okay, not amazing. The location is convenient but I prefer Marina or SOMA.'}
+]
+},
+stonestown:{name:'Stonestown',google:{r:3.6,c:39},yelp:{r:3.3,c:133},
+starDist:[3,28,30,22,17],
+praised:['Mall convenience','Good chicken flavor','Nice staff','Gluten-free options','Regular customers loyal'],
+improve:['Small portions for price','Inconsistent food temp','Slow during rush','Soggy delivery','Overpriced for mall food'],
+gReviews:[
+{author:'Karen W.',date:'Mar 2026',stars:4,text:'A place to go for chicken rice pick up or a quick meal. Fresh and flavorful.'},
+{author:'Megan L.',date:'Mar 2026',stars:3,text:'Really small portion for the price you pay. Expected more from R&amp;R.'},
+{author:'Steve M.',date:'Feb 2026',stars:4,text:'The chicken tasted good with the sauce. Staff is friendly and food is consistent.'}
+],
+yReviews:[
+{author:'Heather K.',date:'Feb 2026',stars:3,text:'It\'s fine for mall food but doesn\'t compare to the standalone locations. Portions are smaller.'},
+{author:'Daniel O.',date:'Jan 2026',stars:2,text:'Ordered delivery and the food arrived lukewarm with soggy rice. Expected better from R&amp;R.'},
+{author:'Tina C.',date:'Jan 2026',stars:4,text:'Quick and tasty lunch while shopping. The chicken was tender and sauces were great.'}
+]
+},
+santaclara:{name:'Santa Clara',google:{r:3.6,c:108},yelp:{r:3.5,c:141},
+starDist:[4,30,28,20,18],
+praised:['Great catering options','South Bay accessibility','Good value combos','Friendly staff','Flavorful soup'],
+improve:['Inconsistent preparation','Sometimes long waits','Needs more staff','Delivery packaging','Dry chicken complaints'],
+gReviews:[
+{author:'Hilda F.',date:'Mar 2026',stars:5,text:'Great service and the original order is always on point, down to the broth, utensils and added chili. The soup is super flavorful and packed with chicken flavor.'},
+{author:'Peter H.',date:'Mar 2026',stars:4,text:'The chicken is always cooked well and tastes great, even without the sauce. Happy to have R&amp;R in the South Bay.'},
+{author:'Maria G.',date:'Feb 2026',stars:3,text:'Food is good when it\'s good. But there seems to be a consistency issue. Some visits are 5-star, others not so much.'}
+],
+yReviews:[
+{author:'Susan B.',date:'Feb 2026',stars:3,text:'Decent chicken rice but nothing special. The Kearny location is much better. Service was slow.'},
+{author:'Robert L.',date:'Jan 2026',stars:4,text:'Ordered the catering box for our team meeting and everyone loved it. Great value for group orders.'},
+{author:'Emily T.',date:'Jan 2026',stars:3,text:'Chicken was a bit dry this time. The sauces saved it though. Hope they get more consistent.'}
+]
+}
 };
-
 const insights=[
-  {title:'Top-performing locations correlate reviews with profitability',body:'Kearny (4.3G/4.1Y) and SOMA (4.3G/4.0Y) are both among the highest-rated and most profitable locations. Marina (4.3G/4.2Y) also demonstrates this pattern. All three core locations now match at 4.3 on Google &#8212; strong reviews appear to drive repeat visits and delivery orders.'},
-  {title:'Stanyan needs immediate operational intervention',body:'At 3.0 on Google with only 56 reviews, Stanyan remains a reputation risk. Recurring themes: order inaccuracy, long waits, and inconsistent quality. Some recent positive reviews suggest slight improvement, but the 3.0 rating still trails the chain average significantly.'},
-  {title:'Stonestown\'s review issues compound its financial problems',body:'The lowest Yelp rating (3.3) paired with the only negative P&L (-$741 loss) makes Stonestown the most at-risk location. Reviews cite portion sizes and food temperature &#8212; both fixable but requiring management attention at a location already under financial pressure.'},
-  {title:'Delivery experience is a differentiator',body:'Positive delivery mentions (SOMA, Marina, Kearny) correlate with higher delivery revenue. Negative delivery mentions (Stonestown, Santa Clara) suggest packaging and temperature issues. Given delivery is 52% of sales, this is the single highest-leverage improvement area.'},
-  {title:'Catering reviews are an untapped marketing asset',body:'Santa Clara\'s strong catering business ($27K in P2) gets enthusiastic reviews. These testimonials should be prominently featured in catering-focused marketing across all locations, especially as catering grew 37.5% YoY chain-wide.'}
+{title:'Marina and Kearny Google ratings dipped from 4.3 to 4.2',body:'Both flagship locations saw a small Google rating decline this week. Marina\'s Yelp rating improved to 4.3 (from 4.2), partially offsetting the dip. Kearny remains the highest-reviewed location by volume (379 Google + 451 Yelp). Monitor whether this is a temporary fluctuation or the start of a trend &#8212; recent negative reviews cite price increases and portion concerns.'},
+{title:'Stanyan continues to deteriorate &#8212; now at 2.9 on Google',body:'Stanyan slipped further from 3.0 to 2.9 on Google with 55 reviews. Recurring themes remain unchanged: order inaccuracy, long waits, small bones in chicken, and inconsistent quality. While some reviewers report positive experiences, the overall trajectory is negative. Operational intervention beyond staff retraining may be required.'},
+{title:'SOMA is now the top-rated location on Google at 4.3',body:'With Marina and Kearny dipping to 4.2, SOMA stands alone at 4.3 on Google with 280 reviews. Positive mentions of fast service, friendly staff, and solid delivery experience. This makes SOMA the best candidate for marketing testimonials and the operational benchmark for other locations.'},
+{title:'Delivery experience remains a key differentiator',body:'Positive delivery mentions (SOMA, Marina) correlate with higher delivery revenue. Negative delivery mentions (Stonestown soggy rice, Santa Clara packaging) continue to surface. Given delivery is 52% of sales, packaging and temperature control remain the single highest-leverage improvement area.'},
+{title:'Catering reviews are an untapped marketing asset',body:'Santa Clara\'s strong catering business continues to receive enthusiastic reviews. These testimonials should be prominently featured in catering-focused marketing across all locations, especially as catering grew 37.5% YoY chain-wide.'}
 ];
-
 let currentLoc='marina';
-
 function starsHTML(r){
-  let s='';
-  const full=Math.floor(r),half=r%1>=0.3&&r%1<0.8,empty=5-full-(half?1:0);
-  for(let i=0;i<full;i++) s+='&#9733;';
-  if(half) s+='&#9734;';
-  for(let i=0;i<empty;i++) s+='&#9734;';
-  return '<span class="stars">'+s+'</span>';
+let s='';
+const full=Math.floor(r),half=r%1>=0.3&&r%1<0.8,empty=5-full-(half?1:0);
+for(let i=0;i<full;i++) s+='&#9733;';
+if(half) s+='&#9734;';
+for(let i=0;i<empty;i++) s+='&#9734;';
+return '<span class="stars">'+s+'</span>';
 }
-
 function buildTabs(){
-  const el=document.getElementById('locTabs');
-  let h='';
-  for(const[k,v] of Object.entries(locData)){
-    h+='<button onclick="showLocation(\''+k+'\')" '+(k===currentLoc?'class="active"':'')+'>'+v.name+'</button>';
-  }
-  el.innerHTML=h;
+const el=document.getElementById('locTabs');
+let h='';
+for(const[k,v] of Object.entries(locData)){
+h+='<button onclick="showLocation(\''+k+'\')" '+(k===currentLoc?'class="active"':'')+'>'+v.name+'</button>';
 }
-
+el.innerHTML=h;
+}
 function buildRatings(loc){
-  const d=locData[loc];
-  const avg=((d.google.r+d.yelp.r)/2).toFixed(1);
-  const totalReviews=d.google.c+d.yelp.c;
-  let h='<div class="section-title">Ratings Overview &#8212; '+d.name+'</div>';
-  h+='<div class="grid-3" style="margin-bottom:24px">';
-  h+='<div class="rating-card"><div class="platform">Google</div><div class="score">'+d.google.r+'</div><div>'+starsHTML(d.google.r)+'</div><div class="count">'+d.google.c.toLocaleString()+' reviews</div></div>';
-  h+='<div class="rating-card"><div class="platform">Yelp</div><div class="score">'+d.yelp.r+'</div><div>'+starsHTML(d.yelp.r)+'</div><div class="count">'+d.yelp.c.toLocaleString()+' reviews</div></div>';
-  h+='<div class="rating-card"><div class="platform">Combined Average</div><div class="score">'+avg+'</div><div>'+starsHTML(parseFloat(avg))+'</div><div class="count">'+totalReviews.toLocaleString()+' total reviews</div></div>';
-  h+='</div>';
-  document.getElementById('ratings-section').innerHTML=h;
+const d=locData[loc];
+const avg=((d.google.r+d.yelp.r)/2).toFixed(1);
+const totalReviews=d.google.c+d.yelp.c;
+let h='<div class="section-title">Ratings Overview &#8212; '+d.name+'</div>';
+h+='<div class="grid-3" style="margin-bottom:24px">';
+h+='<div class="rating-card"><div class="platform">Google</div><div class="score">'+d.google.r+'</div><div>'+starsHTML(d.google.r)+'</div><div class="count">'+d.google.c.toLocaleString()+' reviews</div></div>';
+h+='<div class="rating-card"><div class="platform">Yelp</div><div class="score">'+d.yelp.r+'</div><div>'+starsHTML(d.yelp.r)+'</div><div class="count">'+d.yelp.c.toLocaleString()+' reviews</div></div>';
+h+='<div class="rating-card"><div class="platform">Combined Average</div><div class="score">'+avg+'</div><div>'+starsHTML(parseFloat(avg))+'</div><div class="count">'+totalReviews.toLocaleString()+' total reviews</div></div>';
+h+='</div>';
+document.getElementById('ratings-section').innerHTML=h;
 }
-
 function buildSnapshot(loc){
-  const d=locData[loc];
-  const dist=d.starDist;
-  const labels=['5 star','4 star','3 star','2 star','1 star'];
-  let h='<div class="section-title">Combined Review Snapshot</div><div class="grid-2"><div class="card"><h3>Star Distribution</h3>';
-  for(let i=0;i<5;i++){
-    h+='<div class="star-bar-row"><div class="label">'+labels[i]+'</div><div class="bar-bg"><div class="bar-fill" style="width:'+dist[i]+'%"></div></div><div class="pct">'+dist[i]+'%</div></div>';
-  }
-  h+='</div><div class="card"><h3>Most Praised</h3><div style="margin-bottom:14px">';
-  d.praised.forEach(t=>{h+='<span class="tag good">'+t+'</span>';});
-  h+='</div><h3>Needs Improvement</h3><div>';
-  d.improve.forEach(t=>{h+='<span class="tag warn">'+t+'</span>';});
-  h+='</div></div></div>';
-  document.getElementById('snapshot-section').innerHTML=h;
-}
-
-function buildReviews(loc){
-  const d=locData[loc];
-  let h='<div class="grid-2"><div class="review-col"><h4>Google Reviews &#8212; '+d.name+'</h4>';
-  d.gReviews.forEach(r=>{
-    h+='<div class="review-item"><div class="rev-header"><span class="rev-author">'+r.author+'</span><span class="rev-date">'+r.date+'</span></div><div style="margin-bottom:4px">'+starsHTML(r.stars)+'</div><div class="rev-text">'+r.text+'</div></div>';
-  });
-  h+='</div><div class="review-col"><h4>Yelp Reviews &#8212; '+d.name+'</h4>';
-  d.yReviews.forEach(r=>{
-    h+='<div class="review-item"><div class="rev-header"><span class="rev-author">'+r.author+'</span><span class="rev-date">'+r.date+'</span></div><div style="margin-bottom:4px">'+starsHTML(r.stars)+'</div><div class="rev-text">'+r.text+'</div></div>';
-  });
-  h+='</div></div>';
-  document.getElementById('reviews-section').innerHTML=h;
-}
-
-function buildInsights(){
-  let h='';
-  insights.forEach((ins,i)=>{
-    h+='<div class="insight-card"><span class="insight-num">'+(i+1)+'</span><span class="insight-title">'+ins.title+'</span><div class="insight-body">'+ins.body+'</div></div>';
-  });
-  document.getElementById('insights-section').innerHTML=h;
-}
-
-function showLocation(loc){
-  currentLoc=loc;
-  document.querySelectorAll('.loc-tabs button').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.loc-tabs button').forEach(b=>{if(b.textContent===locData[loc].name)b.classList.add('active');});
-  buildRatings(loc);
-  buildSnapshot(loc);
-  buildReviews(loc);
-}
-
-function init(){
-  buildTabs();
-  showLocation('marina');
-  buildInsights();
-}
-</script>
-</body>
-</html>
+const d=locData[loc];
+const dist=d.starDist;
+const labels=['5 star','4 star','3 star','2 star','1 star'];
+let h='<div class="section-title">Combined Review Snapshot</div><div class="grkBÓ"#ãÆFb6Æ73Ò&6&B#ãÆ3å7F"F7G&'WFöãÂö3âs°¦f÷"ÆWBÓ¶ÃS¶²²°¦³ÒsÆFb6Æ73Ò'7F"Ö&"×&÷r#ãÆFb6Æ73Ò&Æ&VÂ#âr¶Æ&VÇ5¶Ò²sÂöFcãÆFb6Æ73Ò&&"Ö&r#ãÆFb6Æ73Ò&&"ÖfÆÂ"7GÆSÒ'vGF¢r¶F7E¶Ò²rR#ãÂöFcãÂöFcãÆFb6Æ73Ò'7B#âr¶F7E¶Ò²rSÂöFcãÂöFcâs°§Ð¦³ÒsÂöFcãÆFb6Æ73Ò&6&B#ãÆ3äÖ÷7B&6VCÂö3ãÆFb7GÆSÒ&Ö&vâÖ&÷GFöÓ£G#âs°¦Bç&6VBæf÷$V6CÓç¶³ÒsÇ7â6Æ73Ò'FrvööB#âr·B²sÂ÷7ãâs·Ò°¦³ÒsÂöFcãÆ3äæVVG2×&÷fVÖVçCÂö3ãÆFcâs°¦Bæ×&÷fRæf÷$V6CÓç¶³ÒsÇ7â6Æ73Ò'Frv&â#âr·B²sÂ÷7ãâs·Ò°¦³ÒsÂöFcãÂöFcãÂöFcâs°¦Fö7VÖVçBævWDVÆVÖVçD'Bw6æ6÷B×6V7FöâræææW$DÔÃÖ°§Ð¦gVæ7Föâ'VÆE&WfWw2Æö2°¦6öç7BCÖÆö4FF¶Æö5Ó°¦ÆWBÒsÆFb6Æ73Ò&w&BÓ"#ãÆFb6Æ73Ò'&WfWrÖ6öÂ#ãÆCävöövÆR&WfWw2b3##²r¶BææÖR²sÂöCâs°¦Bæu&WfWw2æf÷$V6#Óç°¦³ÒsÆFb6Æ73Ò'&WfWrÖFVÒ#ãÆFb6Æ73Ò'&WbÖVFW"#ãÇ7â6Æ73Ò'&WbÖWF÷"#âr·"æWF÷"²sÂ÷7ããÇ7â6Æ73Ò'&WbÖFFR#âr·"æFFR²sÂ÷7ããÂöFcãÆFb7GÆSÒ&Ö&vâÖ&÷GFöÓ£G#âr·7F'4DÔÂ"ç7F'2²sÂöFcãÆFb6Æ73Ò'&Wb×FWB#âr·"çFWB²sÂöFcãÂöFcâs°§Ò°¦³ÒsÂöFcãÆFb6Æ73Ò'&WfWrÖ6öÂ#ãÆCåVÇ&WfWw2b3##²r¶BææÖR²sÂöCâs°¦Bç&WfWw2æf÷$V6#Óç°¦³ÒsÆFb6Æ73Ò'&WfWrÖFVÒ#ãÆFb6Æ73Ò'&WbÖVFW"#ãÇ7â6Æ73Ò'&WbÖWF÷"#âr·"æWF÷"²sÂ÷7ããÇ7â6Æ73Ò'&WbÖFFR#âr·"æFFR²sÂ÷7ããÂöFcãÆFb7GÆSÒ&Ö&vâÖ&÷GFöÓ£G#âr·7F'4DÔÂ"ç7F'2²sÂöFcãÆFb6Æ73Ò'&Wb×FWB#âr·"çFWB²sÂöFcãÂöFcâs°§Ò°¦³ÒsÂöFcãÂöFcâs°¦Fö7VÖVçBævWDVÆVÖVçD'Bw&WfWw2×6V7FöâræææW$DÔÃÖ°§Ð¦gVæ7Föâ'VÆDç6vG2°¦ÆWBÒrs°¦ç6vG2æf÷$V6ç2ÆÓç°¦³ÒsÆFb6Æ73Ò&ç6vBÖ6&B#ãÇ7â6Æ73Ò&ç6vBÖçVÒ#âr²³²sÂ÷7ããÇ7â6Æ73Ò&ç6vB×FFÆR#âr¶ç2çFFÆR²sÂ÷7ããÆFb6Æ73Ò&ç6vBÖ&öG#âr¶ç2æ&öG²sÂöFcãÂöFcâs°§Ò°¦Fö7VÖVçBævWDVÆVÖVçD'Bvç6vG2×6V7FöâræææW$DÔÃÖ°§Ð¦gVæ7Föâ6÷tÆö6FöâÆö2°¦7W'&VçDÆö3ÖÆö3°¦Fö7VÖVçBçVW'6VÆV7F÷$ÆÂræÆö2×F'2'WGFöâræf÷$V6#Óæ"æ6Æ74Æ7Bç&VÖ÷fRv7FfRr°¦Fö7VÖVçBçVW'6VÆV7F÷$ÆÂræÆö2×F'2'WGFöâræf÷$V6#Óç¶b"çFWD6öçFVçCÓÓÖÆö4FF¶Æö5ÒææÖR"æ6Æ74Æ7BæFBv7FfRr·Ò°¦'VÆE&Fæw2Æö2°¦'VÆE6æ6÷BÆö2°¦'VÆE&WfWw2Æö2°§Ð¦gVæ7FöâæB°¦'VÆEF'2°§6÷tÆö6FöâvÖ&ær°¦'VÆDç6vG2°§Ð£Â÷67&Cà£Âö&öGà£ÂöFÖÃà
