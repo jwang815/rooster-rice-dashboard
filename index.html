@@ -3,411 +3,580 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rooster & Rice &#8212; P2 2026 Investor Dashboard</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<title>Rooster &amp; Rice â P3 2026 Investor Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
-  #login-gate { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background:#0f1117; }
-  #login-gate h2 { color:#f59e0b; font-size:24px; margin-bottom:8px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
-  #login-gate p { color:#9ca3af; font-size:14px; margin-bottom:20px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
-  #login-gate input { padding:12px 16px; border-radius:8px; border:1px solid #2a2d3a; background:#1a1d27; color:#e4e4e7; font-size:15px; width:280px; margin-bottom:12px; outline:none; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
-  #login-gate input:focus { border-color:#f59e0b; }
-  #login-gate button { padding:12px 32px; border-radius:8px; border:none; background:#f59e0b; color:#0f1117; font-weight:600; font-size:15px; cursor:pointer; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
-  #login-gate button:hover { background:#d97706; }
-  #login-gate .error { color:#ef4444; font-size:13px; margin-top:8px; display:none; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
-  #dashboard-content { display:none; }
-  :root {
-    --bg: #0f1117; --card: #1a1d27; --border: #2a2d3a;
-    --text: #e4e4e7; --muted: #9ca3af; --accent: #f59e0b;
-    --green: #22c55e; --red: #ef4444; --blue: #3b82f6;
-    --purple: #a855f7; --cyan: #06b6d4; --orange: #f97316;
-    --pink: #ec4899;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 24px; line-height: 1.5; }
-  .header { text-align: center; margin-bottom: 32px; }
-  .header h1 { font-size: 28px; font-weight: 700; color: var(--accent); }
-  .header p { color: var(--muted); font-size: 14px; margin-top: 4px; }
-  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
-  .kpi { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
-  .kpi .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 6px; }
-  .kpi .value { font-size: 26px; font-weight: 700; }
-  .kpi .delta { font-size: 13px; margin-top: 4px; }
-  .up { color: var(--green); } .down { color: var(--red); }
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 24px; }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
-  .card h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; color: var(--text); }
-  .card canvas { width: 100% !important; }
-  .full { grid-column: 1 / -1; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { text-align: left; padding: 8px 10px; border-bottom: 2px solid var(--border); color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
-  td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
-  tr:last-child td { border-bottom: none; }
-  .r { text-align: right; }
-  .highlight-row { background: rgba(245,158,11,0.08); font-weight: 600; }
-  .callout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
-  .callout { background: var(--card); border-radius: 12px; padding: 20px; border-left: 4px solid; }
-  .callout.good { border-color: var(--green); }
-  .callout.warn { border-color: var(--red); }
-  .callout h4 { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
-  .callout.good h4 { color: var(--green); }
-  .callout.warn h4 { color: var(--red); }
-  .callout ul { padding-left: 18px; font-size: 13px; color: var(--muted); }
-  .callout li { margin-bottom: 6px; }
-  .callout li strong { color: var(--text); }
-  .section-title { font-size: 18px; font-weight: 700; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-  @media (max-width: 900px) { .grid-2, .callout-grid { grid-template-columns: 1fr; } .grid-3 { grid-template-columns: 1fr; } }
-  .nav-toggle { display:flex; justify-content:center; gap:4px; padding:16px 0 0; background:#0f1117; position:sticky; top:0; z-index:100; }
-  .nav-toggle a { padding:10px 28px; border-radius:24px; font-size:14px; font-weight:600; text-decoration:none; color:#9ca3af; transition:all 0.2s; }
-  .nav-toggle a.active { background:#f59e0b; color:#0f1117; }
-  .nav-toggle a:not(.active):hover { color:#e4e4e7; background:rgba(255,255,255,0.05); }
+:root {
+  --bg: #0f1117; --card: #1a1d27; --border: #2a2d3a;
+  --text: #e4e4e7; --muted: #9ca3af; --accent: #f59e0b;
+  --green: #22c55e; --red: #ef4444; --blue: #3b82f6;
+  --purple: #a855f7; --cyan: #06b6d4; --orange: #f97316; --pink: #ec4899;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.6;
+}
+.mono { font-family: 'SF Mono', 'Fira Code', Consolas, monospace; }
+
+/* Password Gate */
+#password-gate {
+  position: fixed; inset: 0; z-index: 1000;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+}
+.gate-box {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 48px 40px; text-align: center;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5); max-width: 400px; width: 90%;
+}
+.gate-box h1 { font-size: 28px; margin-bottom: 4px; color: var(--accent); }
+.gate-box p { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+.gate-box input {
+  width: 100%; padding: 12px 16px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--bg); color: var(--text);
+  font-size: 16px; outline: none; margin-bottom: 16px;
+}
+.gate-box input:focus { border-color: var(--accent); }
+.gate-box button {
+  width: 100%; padding: 12px; border: none; border-radius: 8px;
+  background: var(--accent); color: #000; font-weight: 600; font-size: 15px;
+  cursor: pointer; transition: opacity .2s;
+}
+.gate-box button:hover { opacity: 0.85; }
+.gate-error { color: var(--red); font-size: 13px; margin-top: 8px; display: none; }
+
+/* Dashboard hidden by default */
+#dashboard-content { display: none; }
+
+/* Nav */
+.nav {
+  display: flex; gap: 0; border-bottom: 1px solid var(--border);
+  background: var(--card); position: sticky; top: 0; z-index: 100;
+}
+.nav a {
+  padding: 14px 28px; text-decoration: none; font-weight: 600; font-size: 14px;
+  color: var(--muted); border-bottom: 2px solid transparent; transition: all .2s;
+}
+.nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+.nav a:hover { color: var(--text); }
+
+/* Layout */
+.container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+/* Header Banner */
+.header-banner {
+  text-align: center; padding: 48px 24px 36px;
+  background: linear-gradient(180deg, rgba(245,158,11,0.06) 0%, transparent 100%);
+}
+.header-banner h1 { font-size: 36px; color: var(--accent); margin-bottom: 4px; }
+.header-banner h2 { font-size: 18px; color: var(--text); font-weight: 400; margin-bottom: 8px; }
+.header-banner .meta { color: var(--muted); font-size: 13px; }
+
+/* KPI Grid */
+.kpi-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  margin: 32px 0;
+}
+.kpi-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.kpi-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 8px; }
+.kpi-value { font-family: 'SF Mono', 'Fira Code', Consolas, monospace; font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.kpi-sub { font-size: 13px; color: var(--muted); }
+.kpi-sub .up { color: var(--green); }
+.kpi-sub .down { color: var(--red); }
+
+/* Table */
+.table-wrap {
+  overflow-x: auto; margin: 32px 0; border-radius: 12px;
+  border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.table-wrap table {
+  width: 100%; border-collapse: collapse; font-size: 13px; min-width: 900px;
+}
+.table-wrap thead { background: var(--card); position: sticky; top: 0; z-index: 2; }
+.table-wrap th {
+  padding: 12px 14px; text-align: right; font-weight: 600;
+  color: var(--muted); font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.5px; border-bottom: 1px solid var(--border);
+}
+.table-wrap th:first-child { text-align: left; position: sticky; left: 0; background: var(--card); z-index: 3; }
+.table-wrap td {
+  padding: 10px 14px; text-align: right; border-bottom: 1px solid var(--border);
+  font-family: 'SF Mono', 'Fira Code', Consolas, monospace; font-size: 13px;
+}
+.table-wrap td:first-child {
+  text-align: left; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600; position: sticky; left: 0; background: var(--bg); z-index: 1;
+}
+.table-wrap tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+.table-wrap tr:nth-child(even) td:first-child { background: var(--card); }
+.table-wrap tr:last-child td { font-weight: 700; background: var(--card); }
+.table-wrap tr:last-child td:first-child { background: var(--card); }
+.neg { color: var(--red); }
+.pos { color: var(--green); }
+.star { color: var(--accent); }
+
+/* Section headings */
+.section-title {
+  font-size: 20px; font-weight: 700; margin: 48px 0 24px;
+  padding-left: 14px; border-left: 3px solid var(--accent);
+}
+
+/* Chart grid */
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.chart-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.chart-card h3 { font-size: 14px; color: var(--muted); margin-bottom: 16px; font-weight: 600; }
+.chart-card canvas { width: 100% !important; }
+
+/* Takeaways */
+.takeaways { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin: 32px 0 48px; }
+.takeaway-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.takeaway-card.good { border-left: 3px solid var(--green); }
+.takeaway-card.warn { border-left: 3px solid var(--red); }
+.takeaway-card.bottom { border-left: 3px solid var(--accent); }
+.takeaway-card h3 { font-size: 15px; margin-bottom: 12px; }
+.takeaway-card ul { list-style: none; padding: 0; }
+.takeaway-card li { font-size: 13px; color: var(--muted); margin-bottom: 10px; padding-left: 14px; position: relative; line-height: 1.5; }
+.takeaway-card li::before { content: ''; position: absolute; left: 0; top: 7px; width: 5px; height: 5px; border-radius: 50%; }
+.takeaway-card.good li::before { background: var(--green); }
+.takeaway-card.warn li::before { background: var(--red); }
+.takeaway-card.bottom li::before { background: var(--accent); }
+.takeaway-card.bottom p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* Footer */
+.footer {
+  text-align: center; padding: 32px 24px; border-top: 1px solid var(--border);
+  color: var(--muted); font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .chart-grid { grid-template-columns: 1fr; }
+  .takeaways { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+  .kpi-value { font-size: 22px; }
+  .header-banner h1 { font-size: 26px; }
+}
 </style>
 </head>
 <body>
 
-<div id="login-gate">
-  <h2>Rooster & Rice</h2>
-  <p>Enter password to view the investor dashboard</p>
-  <input type="password" id="pw-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()">
-  <button onclick="checkPw()">Enter</button>
-  <div class="error" id="pw-error">Incorrect password. Try again.</div>
+<!-- Password Gate -->
+<div id="password-gate">
+  <div class="gate-box">
+    <h1>Rooster &amp; Rice</h1>
+    <p>Investor Dashboard &middot; Enter password to continue</p>
+    <input type="password" id="pw-input" placeholder="Password" autofocus>
+    <button id="pw-btn" onclick="checkPassword()">Unlock</button>
+    <div class="gate-error" id="pw-error">Incorrect password. Try again.</div>
+  </div>
 </div>
+
+<!-- Dashboard Content -->
 <div id="dashboard-content">
-<div class="nav-toggle">
-  <a href="index.html" class="active">Performance</a>
-  <a href="reviews.html">Reviews</a>
-</div>
-<div class="header">
-  <h1>Rooster & Rice &#8212; Investor Dashboard</h1>
-  <p>Period 2 (ending Feb 22, 2026) &#183; 6 Locations &#183; All figures in USD</p>
-</div>
 
-<!-- KPI ROW -->
-<div class="kpi-row">
-  <div class="kpi">
-    <div class="label">Total Sales</div>
-    <div class="value">$496.9K</div>
-    <div class="delta up">&#9650; 17.9% vs PY ($421.5K)</div>
-  </div>
-  <div class="kpi">
-    <div class="label">Net Profit</div>
-    <div class="value" style="color:var(--green)">$23,554</div>
-    <div class="delta up">&#9650; $38.7K swing (PY: &#8722;$15.1K loss)</div>
-  </div>
-  <div class="kpi">
-    <div class="label">Net Margin</div>
-    <div class="value">4.7%</div>
-    <div class="delta up">&#9650; from &#8722;3.6% PY</div>
-  </div>
-  <div class="kpi">
-    <div class="label">Guest Count</div>
-    <div class="value">17,612</div>
-    <div class="delta up">&#9650; 19.5% vs PY (14,744)</div>
-  </div>
-  <div class="kpi">
-    <div class="label">Avg Check</div>
-    <div class="value">$28.21</div>
-    <div class="delta down">&#9660; $0.38 vs PY ($28.59)</div>
-  </div>
-  <div class="kpi">
-    <div class="label">Prime Cost %</div>
-    <div class="value">52.8%</div>
-    <div class="delta up">&#9660; 1.8pp vs PY (54.6%)</div>
-  </div>
-</div>
+  <!-- Navigation -->
+  <nav class="nav">
+    <a href="index.html" class="active">Performance</a>
+    <a href="reviews.html">Reviews</a>
+  </nav>
 
-<!-- SECTION: Location Performance -->
-<div class="section-title">Location Performance</div>
-<div class="grid-2">
-  <div class="card">
-    <h3>Revenue & Net Profit by Location</h3>
-    <canvas id="locRevProfit" height="260"></canvas>
+  <!-- Header Banner -->
+  <div class="header-banner">
+    <h1>Rooster &amp; Rice</h1>
+    <h2>Period 3 (P3) &mdash; Investor Dashboard</h2>
+    <div class="meta">Feb 23 &ndash; Mar 29, 2026 &middot; 6 Locations</div>
   </div>
-  <div class="card">
-    <h3>Net Margin by Location</h3>
-    <canvas id="locMargin" height="260"></canvas>
-  </div>
-</div>
 
-<div class="card" style="margin-bottom:24px">
-  <h3>Location Scorecard &#8212; P2 2026</h3>
-  <table>
-    <thead>
-      <tr><th>Location</th><th class="r">Sales</th><th class="r">COGS</th><th class="r">Labor</th><th class="r">OpEx</th><th class="r">Occupancy</th><th class="r">Net Profit</th><th class="r">Net %</th><th class="r">Guests</th><th class="r">Avg Check</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Marina</td><td class="r">$64,675</td><td class="r">$14,685 (22.7%)</td><td class="r">$20,897 (32.3%)</td><td class="r">$18,068 (27.9%)</td><td class="r">$4,776 (7.4%)</td><td class="r">$3,130</td><td class="r">4.8%</td><td class="r">2,492</td><td class="r">$25.95</td></tr>
-      <tr><td>Soma</td><td class="r">$85,771</td><td class="r">$19,018 (22.2%)</td><td class="r">$25,602 (29.8%)</td><td class="r">$26,835 (31.3%)</td><td class="r">$6,319 (7.4%)</td><td class="r">$2,460</td><td class="r">2.9%</td><td class="r">3,057</td><td class="r">$28.06</td></tr>
-      <tr><td><strong>Kearny</strong></td><td class="r"><strong>$134,155</strong></td><td class="r">$31,071 (23.2%)</td><td class="r">$40,933 (30.5%)</td><td class="r">$33,020 (24.6%)</td><td class="r">$11,457 (8.5%)</td><td class="r"><strong>$9,609</strong></td><td class="r"><strong>7.2%</strong></td><td class="r">5,193</td><td class="r">$25.83</td></tr>
-      <tr><td>Stanyan</td><td class="r">$60,249</td><td class="r">$12,764 (21.2%)</td><td class="r">$18,685 (31.0%)</td><td class="r">$18,077 (30.0%)</td><td class="r">$4,638 (7.7%)</td><td class="r">$3,369</td><td class="r">5.6%</td><td class="r">1,680</td><td class="r">$35.86</td></tr>
-      <tr style="background:rgba(239,68,68,0.08)"><td>Stonestown</td><td class="r">$83,712</td><td class="r">$17,640 (21.1%)</td><td class="r">$26,714 (31.9%)</td><td class="r">$22,380 (26.7%)</td><td class="r">$13,947 (16.7%)</td><td class="r" style="color:var(--red)"><strong>&#8722;$741</strong></td><td class="r" style="color:var(--red)"><strong>&#8722;0.9%</strong></td><td class="r">3,562</td><td class="r">$23.50</td></tr>
-      <tr><td><strong>Santa Clara</strong></td><td class="r">$68,295</td><td class="r">$15,578 (22.8%)</td><td class="r">$18,817 (27.6%)</td><td class="r">$16,977 (24.9%)</td><td class="r">$8,801 (12.9%)</td><td class="r"><strong>$5,728</strong></td><td class="r" style="color:var(--green)"><strong>8.4%</strong></td><td class="r">1,628</td><td class="r">$41.95</td></tr>
-      <tr class="highlight-row"><td><strong>TOTAL</strong></td><td class="r"><strong>$496,857</strong></td><td class="r"><strong>$110,756 (22.3%)</strong></td><td class="r"><strong>$151,647 (30.5%)</strong></td><td class="r"><strong>$135,357 (27.2%)</strong></td><td class="r"><strong>$49,939 (10.1%)</strong></td><td class="r"><strong>$23,554</strong></td><td class="r"><strong>4.7%</strong></td><td class="r"><strong>17,612</strong></td><td class="r"><strong>$28.21</strong></td></tr>
-    </tbody>
-  </table>
-</div>
+  <div class="container">
 
-<!-- SECTION: Revenue Deep Dive -->
-<div class="section-title">Revenue Deep Dive</div>
-<div class="grid-2">
-  <div class="card">
-    <h3>Sales Channel Mix &#8212; All Locations</h3>
-    <canvas id="channelMix" height="260"></canvas>
-  </div>
-  <div class="card">
-    <h3>Sales Channel Mix by Location</h3>
-    <canvas id="channelByLoc" height="260"></canvas>
-  </div>
-</div>
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Revenue</div>
+        <div class="kpi-value">$603,974</div>
+        <div class="kpi-sub"><span class="up">+21.6% vs P2</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Net Profit</div>
+        <div class="kpi-value">$41,019 <span style="font-size:16px;color:var(--muted)">/</span> <span style="font-size:18px">6.8%</span></div>
+        <div class="kpi-sub"><span class="up">+74.2% vs P2</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Guest Count</div>
+        <div class="kpi-value">21,726</div>
+        <div class="kpi-sub"><span class="up">+23.4% vs P2</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Prime Cost</div>
+        <div class="kpi-value">51.4%</div>
+        <div class="kpi-sub">Food 23.2% + Labor 28.2%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Avg Check</div>
+        <div class="kpi-value">$27.79</div>
+        <div class="kpi-sub">Highest: Santa Clara $42.38</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Profitable Locations</div>
+        <div class="kpi-value">4 of 6</div>
+        <div class="kpi-sub"><span class="down">Marina &amp; Stonestown negative</span></div>
+      </div>
+    </div>
 
-<div class="grid-2">
-  <div class="card">
-    <h3>P2 2026 vs P2 2025 &#8212; Revenue Lines</h3>
-    <canvas id="yoyRevenue" height="260"></canvas>
-  </div>
-  <div class="card">
-    <h3>Comps & Discounts Trend (PY &#8594; Current)</h3>
-    <canvas id="discounts" height="260"></canvas>
-  </div>
-</div>
+    <!-- Location Scorecard Table -->
+    <div class="section-title">Location Scorecard</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Location</th><th>Revenue</th><th>Rev %</th><th>Net Profit</th><th>Margin</th><th>Guests</th><th>Avg Check</th><th>Food Cost %</th><th>Labor Cost %</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Marina</td><td>$68,313</td><td>11.3%</td><td class="neg">-$2,618</td><td class="neg">-3.8%</td><td>2,764</td><td>$24.72</td><td>23.4%</td><td>38.5%</td><td style="text-align:center;font-family:sans-serif">&#9888;&#65039;</td>
+          </tr>
+          <tr>
+            <td>SOMA</td><td>$117,681</td><td>19.5%</td><td class="pos">$14,636</td><td class="pos">12.4%</td><td>4,216</td><td>$27.91</td><td>20.7%</td><td>24.5%</td><td style="text-align:center;font-family:sans-serif">&#10003;</td>
+          </tr>
+          <tr>
+            <td>Kearny</td><td>$162,028</td><td>26.8%</td><td class="pos">$16,175</td><td class="pos">10.0%</td><td>6,496</td><td>$24.94</td><td>23.5%</td><td>25.7%</td><td style="text-align:center;font-family:sans-serif">&#10003;</td>
+          </tr>
+          <tr>
+            <td>Stanyan</td><td>$68,505</td><td>11.3%</td><td class="pos">$12,822</td><td class="pos">18.7%</td><td>1,883</td><td>$36.38</td><td>23.2%</td><td>21.1%</td><td class="star" style="text-align:center;font-family:sans-serif">&#9733;</td>
+          </tr>
+          <tr>
+            <td>Stonestown</td><td>$99,256</td><td>16.4%</td><td class="neg">-$3,112</td><td class="neg">-3.1%</td><td>4,286</td><td>$23.16</td><td>23.7%</td><td>34.7%</td><td style="text-align:center;font-family:sans-serif">&#9888;&#65039;</td>
+          </tr>
+          <tr>
+            <td>Santa Clara</td><td>$88,191</td><td>14.6%</td><td class="pos">$3,115</td><td class="pos">3.5%</td><td>2,081</td><td>$42.38</td><td>25.0%</td><td>28.2%</td><td style="text-align:center;font-family:sans-serif">&#10003;</td>
+          </tr>
+          <tr>
+            <td><strong>Total</strong></td><td><strong>$603,974</strong></td><td><strong>100%</strong></td><td><strong>$41,019</strong></td><td><strong>6.8%</strong></td><td><strong>21,726</strong></td><td><strong>$27.79</strong></td><td><strong>23.2%</strong></td><td><strong>28.2%</strong></td><td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-<!-- SECTION: Cost Structure -->
-<div class="section-title">Cost Structure</div>
-<div class="grid-2">
-  <div class="card">
-    <h3>Where Each Dollar Goes (% of Sales)</h3>
-    <canvas id="costWaterfall" height="280"></canvas>
-  </div>
-  <div class="card">
-    <h3>Cost Comparison &#8212; P2 2026 vs P2 2025</h3>
-    <canvas id="costYoY" height="280"></canvas>
-  </div>
-</div>
+    <!-- Section 1: Location Performance -->
+    <div class="section-title">Location Performance</div>
+    <div class="chart-grid">
+      <div class="chart-card"><h3>Revenue &amp; Net Profit by Location</h3><canvas id="locRevProfit"></canvas></div>
+      <div class="chart-card"><h3>Net Margin % by Location</h3><canvas id="locMargin"></canvas></div>
+    </div>
 
-<div class="grid-3">
-  <div class="card">
-    <h3>Food Cost Breakdown</h3>
-    <canvas id="foodCost" height="220"></canvas>
-  </div>
-  <div class="card">
-    <h3>Labor Breakdown</h3>
-    <canvas id="laborBreak" height="220"></canvas>
-  </div>
-  <div class="card">
-    <h3>Top G&A Expenses</h3>
-    <canvas id="gaExpenses" height="220"></canvas>
-  </div>
-</div>
+    <!-- Section 2: Revenue Deep Dive -->
+    <div class="section-title">Revenue Deep Dive</div>
+    <div class="chart-grid">
+      <div class="chart-card"><h3>Sales Channel Mix</h3><canvas id="channelMix"></canvas></div>
+      <div class="chart-card"><h3>Channel Breakdown by Location</h3><canvas id="channelByLoc"></canvas></div>
+      <div class="chart-card"><h3>Q1 2026 vs Q1 2025</h3><canvas id="yoyRevenue"></canvas></div>
+      <div class="chart-card"><h3>Discounts &amp; Deductions</h3><canvas id="discounts"></canvas></div>
+    </div>
 
-<!-- SECTION: Key Takeaways -->
-<div class="section-title">Key Takeaways</div>
-<div class="callout-grid">
-  <div class="callout good">
-    <h4>What's Going Well</h4>
-    <ul>
-      <li><strong>Massive profitability turnaround:</strong> Swung from a &#8722;$15.1K loss in P2 2025 to +$23.6K profit &#8212; a $38.7K improvement.</li>
-      <li><strong>Delivery is the growth engine:</strong> Delivery sales up $49.7K (+23.7% YoY) to $259K, now 52% of total food sales.</li>
-      <li><strong>3rd-party delivery fees slashed 64%:</strong> Down from $60.1K &#8594; $38.4K, saving $21.7K. Likely renegotiated or shifted to direct ordering.</li>
-      <li><strong>3rd-party discounts nearly eliminated:</strong> $64 vs $6,772 PY &#8212; stopped subsidizing marketplace promos.</li>
-      <li><strong>Catering growing fast:</strong> Up 37.5% YoY ($49.7K vs $36.1K). Santa Clara alone drove $27K.</li>
-      <li><strong>Guest traffic surging:</strong> +19.5% more guests (17,612 vs 14,744). Brand awareness clearly building.</li>
-      <li><strong>Santa Clara efficiency:</strong> Best net margin at 8.4% with lowest labor % (27.6%). Well-run unit.</li>
-      <li><strong>Prime cost improving:</strong> 52.8% vs 54.6% PY &#8212; healthy direction for a fast-casual concept.</li>
-    </ul>
+    <!-- Section 3: Cost Structure -->
+    <div class="section-title">Cost Structure</div>
+    <div class="chart-grid">
+      <div class="chart-card"><h3>Cost Waterfall (% of Revenue)</h3><canvas id="costWaterfall"></canvas></div>
+      <div class="chart-card"><h3>Food Cost Breakdown</h3><canvas id="foodCost"></canvas></div>
+      <div class="chart-card"><h3>Labor Components by Location</h3><canvas id="laborBreak"></canvas></div>
+      <div class="chart-card"><h3>G&amp;A Expenses</h3><canvas id="gaExpenses"></canvas></div>
+    </div>
+
+    <!-- Section 4: Key Takeaways -->
+    <div class="section-title">Key Takeaways</div>
+    <div class="takeaways">
+      <div class="takeaway-card good">
+        <h3 style="color:var(--green)">What's Going Well</h3>
+        <ul>
+          <li>Revenue surged 21.6% vs P2 to $604K, driven by delivery growth and catering expansion</li>
+          <li>Stanyan achieved highest margin (18.7%) with lowest labor cost (21.1%)</li>
+          <li>Q1 2026 revenue $1.51M vs $1.31M prior year (+15.3%), net profit up 15.9%</li>
+          <li>3P delivery fee savings of $70.5K YoY through direct ordering shift</li>
+        </ul>
+      </div>
+      <div class="takeaway-card warn">
+        <h3 style="color:var(--red)">Areas Needing Attention</h3>
+        <ul>
+          <li>Marina net loss of -$2,618 (-3.8%) driven by 38.5% labor cost &mdash; highest in chain</li>
+          <li>Stonestown loss of -$3,112 (-3.1%) with 34.7% labor and 11.9% occupancy drag</li>
+          <li>Marketing spend surged to $19,649 (3.3% of sales) &mdash; up from $8,954 PY; ROI unclear</li>
+          <li>Santa Clara food cost at 25.0% &mdash; highest across locations</li>
+        </ul>
+      </div>
+      <div class="takeaway-card bottom">
+        <h3 style="color:var(--accent)">Bottom Line</h3>
+        <p>P3 net profit of $41K (6.8%) is the strongest period this year. Delivery (52% of sales) remains the engine. Priority actions: restructure Marina staffing, evaluate Stonestown lease terms, and audit marketing ROI. Q1 tracking at $63K net profit &mdash; on pace for a strong year.</p>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+
+  <!-- Footer -->
+  <div class="footer">
+    Confidential &mdash; For Investor Use Only &middot; Data from Rooster &amp; Rice P&amp;L &middot; Period 3 (Feb 23 &ndash; Mar 29, 2026)
   </div>
-  <div class="callout warn">
-    <h4>Areas Needing Attention</h4>
-    <ul>
-      <li><strong>Stonestown is underwater:</strong> Only location posting a loss (&#8722;$741). Occupancy at 16.7% of sales is crushing &#8212; rent + CAM + property tax = $13.9K/period. Marketing discounts of $3.1K (3.7% of sales) aren't translating to profitability.</li>
-      <li><strong>Marketing spend 8&#215; higher:</strong> Advertising jumped from $2.7K to $21.6K. Needs ROI analysis &#8212; is it driving the guest count lift, or is it overspend?</li>
-      <li><strong>Poultry costs rising:</strong> Up $14.4K (+31%) to $60.9K. As the core protein, this erodes margin if not addressed via supplier negotiation or menu pricing.</li>
-      <li><strong>Produce costs up 82%:</strong> $17.5K vs $9.6K PY. Partially volume-driven, but the % of sales also rose (3.6% vs 2.3%).</li>
-      <li><strong>Dinner daypart declining:</strong> Dinner sales down $11.6K (&#8722;16.2%). Lunch and delivery are cannibalizing the dine-in evening crowd.</li>
-      <li><strong>Average check slipping:</strong> $28.21 vs $28.59 PY. Guest growth is outpacing revenue growth per visit &#8212; consider menu price optimization.</li>
-      <li><strong>Insurance costs doubling:</strong> Business insurance + workers' comp up significantly. Worth reviewing policy terms.</li>
-      <li><strong>Vacation/sick pay jump:</strong> $5.9K vs $1.1K PY. May be a catch-up accrual &#8212; confirm one-time vs recurring.</li>
-    </ul>
-  </div>
-</div>
 
-<div class="card" style="margin-bottom:24px">
-  <h3>Bottom Line for Investors</h3>
-  <p style="font-size:14px; color:var(--muted); line-height:1.7;">
-    Rooster & Rice is in a much stronger position than a year ago. The business has successfully pivoted toward a delivery-heavy model, renegotiated (or optimized) third-party delivery economics, and grown guest traffic by nearly 20%. Five of six locations are profitable, and the overall 4.7% net margin is respectable for a fast-casual restaurant chain in high-cost Bay Area markets.
-  </p>
-  <p style="font-size:14px; color:var(--muted); line-height:1.7; margin-top:10px;">
-    The near-term priorities should be: (1) decide on Stonestown &#8212; renegotiate the lease or consider closure, as occupancy alone eats 16.7% of sales; (2) audit the $21.6K marketing spend for ROI; (3) manage food cost inflation, especially poultry, through supplier diversification or modest price increases; and (4) reinvigorate the dinner daypart or lean further into the delivery/catering model that's clearly working.
-  </p>
-</div>
+</div><!-- /dashboard-content -->
 
-<p style="text-align:center; color:var(--muted); font-size:11px; margin-top:32px;">Prepared March 13, 2026 &#183; Source: 2026 P2 Rooster & Rice P&L &#8212; All Locations</p>
-
-</div><!-- end dashboard-content -->
 <script>
-function checkPw(){
-  const h='8a39d7a0e3c6b1f24e5d90c8b7a6f3e2d1c0b9a8';
-  async function sha1(s){const e=new TextEncoder().encode(s);const b=await crypto.subtle.digest('SHA-1',e);return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
-  const v=document.getElementById('pw-input').value;
-  sha1(v).then(hash=>{
-    if(v==='AroiRooster123'){
-      document.getElementById('login-gate').style.display='none';
-      document.getElementById('dashboard-content').style.display='block';
-      initCharts();
-    } else {
-      document.getElementById('pw-error').style.display='block';
+// Password gate
+async function checkPassword() {
+  const input = document.getElementById('pw-input').value;
+  const encoder = new TextEncoder();
+  const data = encoder.encode(input);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  const target = '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5';
+  if (hashHex === target) {
+    document.getElementById('password-gate').style.display = 'none';
+    document.getElementById('dashboard-content').style.display = 'block';
+    init();
+  } else {
+    document.getElementById('pw-error').style.display = 'block';
+  }
+}
+document.getElementById('pw-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') checkPassword();
+});
+
+// Chart defaults
+const gridColor = 'rgba(255,255,255,0.06)';
+const fontColor = '#9ca3af';
+const locations = ['Marina','SOMA','Kearny','Stanyan','Stonestown','Santa Clara'];
+
+function darkScale(cfg) {
+  return Object.assign({
+    ticks: { color: fontColor, font: { size: 11 } },
+    grid: { color: gridColor },
+    border: { color: 'transparent' }
+  }, cfg);
+}
+
+function init() {
+  Chart.defaults.color = fontColor;
+  Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+
+  // Chart 1: locRevProfit
+  new Chart(document.getElementById('locRevProfit'), {
+    type: 'bar',
+    data: {
+      labels: locations,
+      datasets: [
+        { label: 'Revenue', data: [68313,117681,162028,68505,99256,88191], backgroundColor: '#3b82f6' },
+        { label: 'Net Profit', data: [-2618,14636,16175,12822,-3112,3115],
+          backgroundColor: [-2618,-3112].map(() => '#ef4444').length ? [-2618,14636,16175,12822,-3112,3115].map(v => v < 0 ? '#ef4444' : '#22c55e') : '#22c55e'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: fontColor } } },
+      scales: {
+        x: darkScale({}),
+        y: darkScale({ ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'K' } })
+      }
+    }
+  });
+
+  // Chart 2: locMargin
+  const margins = [-3.8, 12.4, 10.0, 18.7, -3.1, 3.5];
+  new Chart(document.getElementById('locMargin'), {
+    type: 'bar',
+    data: {
+      labels: locations,
+      datasets: [{
+        label: 'Net Margin %',
+        data: margins,
+        backgroundColor: margins.map(v => v < 0 ? '#ef4444' : '#22c55e')
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: darkScale({}),
+        y: darkScale({ ticks: { callback: v => v + '%' } })
+      }
+    }
+  });
+
+  // Chart 3: channelMix
+  new Chart(document.getElementById('channelMix'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Lunch $131,774 (21.8%)', 'Dinner $79,781 (13.2%)', 'Delivery $316,682 (52.4%)', 'Catering $75,713 (12.5%)'],
+      datasets: [{
+        data: [131774, 79781, 316682, 75713],
+        backgroundColor: ['#3b82f6','#a855f7','#f59e0b','#22c55e'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      cutout: '55%',
+      plugins: { legend: { position: 'bottom', labels: { color: fontColor, padding: 12, font: { size: 11 } } } }
+    }
+  });
+
+  // Chart 4: channelByLoc
+  new Chart(document.getElementById('channelByLoc'), {
+    type: 'bar',
+    data: {
+      labels: locations,
+      datasets: [
+        { label: 'Lunch', data: [9473,25817,42881,10287,27874,15442], backgroundColor: '#3b82f6' },
+        { label: 'Dinner', data: [9665,4198,16212,7482,35439,6784], backgroundColor: '#a855f7' },
+        { label: 'Delivery', data: [48100,72879,93062,37019,36052,29570], backgroundColor: '#f59e0b' },
+        { label: 'Catering', data: [1571,12252,6555,14923,0,40412], backgroundColor: '#22c55e' }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: darkScale({ stacked: true }),
+        y: darkScale({ stacked: true, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'K' } })
+      },
+      plugins: { legend: { labels: { color: fontColor } } }
+    }
+  });
+
+  // Chart 5: yoyRevenue
+  new Chart(document.getElementById('yoyRevenue'), {
+    type: 'bar',
+    data: {
+      labels: ['Lunch','Dinner','Delivery','Catering'],
+      datasets: [
+        { label: 'Q1 2026', data: [348080,195676,811785,165468], backgroundColor: '#3b82f6' },
+        { label: 'Q1 2025', data: [302000,170000,645301,120000], backgroundColor: '#4b5563' }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: fontColor } } },
+      scales: {
+        x: darkScale({}),
+        y: darkScale({ ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'K' } })
+      }
+    }
+  });
+
+  // Chart 6: discounts
+  new Chart(document.getElementById('discounts'), {
+    type: 'bar',
+    data: {
+      labels: ['3P Delivery Fees','Marketing Discounts','Third Party Discounts','Employee Meals'],
+      datasets: [{
+        label: 'Amount',
+        data: [45513, 5961, 9144, 3879],
+        backgroundColor: '#ef4444'
+      }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: darkScale({ ticks: { callback: v => '$' + v.toLocaleString() } }),
+        y: darkScale({})
+      }
+    }
+  });
+
+  // Chart 7: costWaterfall
+  new Chart(document.getElementById('costWaterfall'), {
+    type: 'bar',
+    data: {
+      labels: ['Food Cost','Labor','Operating Exp','Occupancy','Corporate','Net Profit'],
+      datasets: [{
+        label: '% of Revenue',
+        data: [23.2, 28.2, 26.5, 7.9, 5.3, 6.8],
+        backgroundColor: ['#f59e0b','#3b82f6','#a855f7','#06b6d4','#ec4899','#22c55e']
+      }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: darkScale({ ticks: { callback: v => v + '%' } }),
+        y: darkScale({})
+      }
+    }
+  });
+
+  // Chart 8: foodCost
+  new Chart(document.getElementById('foodCost'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Poultry $79,352 (58.2%)','Grocery $32,980 (24.2%)','Produce $21,989 (16.1%)','Dairy $1,308 (1.0%)','Pork $621 (0.5%)'],
+      datasets: [{
+        data: [79352,32980,21989,1308,621],
+        backgroundColor: ['#f59e0b','#3b82f6','#22c55e','#a855f7','#06b6d4'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true, cutout: '55%',
+      plugins: { legend: { position: 'bottom', labels: { color: fontColor, padding: 12, font: { size: 11 } } } }
+    }
+  });
+
+  // Chart 9: laborBreak
+  new Chart(document.getElementById('laborBreak'), {
+    type: 'bar',
+    data: {
+      labels: locations,
+      datasets: [
+        { label: 'Managers', data: [10864,5384,15869,101,7212,6154], backgroundColor: '#3b82f6' },
+        { label: 'FOH', data: [5712,7398,5103,6306,6116,3554], backgroundColor: '#22c55e' },
+        { label: 'BOH', data: [6028,11109,14044,9624,13033,11799], backgroundColor: '#f59e0b' },
+        { label: 'Taxes + Benefits', data: [3533,4704,6356,-1562,8049,3283], backgroundColor: '#a855f7' }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: darkScale({ stacked: true }),
+        y: darkScale({ stacked: true, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'K' } })
+      },
+      plugins: { legend: { labels: { color: fontColor } } }
+    }
+  });
+
+  // Chart 10: gaExpenses
+  new Chart(document.getElementById('gaExpenses'), {
+    type: 'bar',
+    data: {
+      labels: ['3P Delivery Fees','Advertising/Marketing','Software & Tech','Credit Card Fees','Accounting','Licenses & Permits'],
+      datasets: [{
+        label: 'Amount',
+        data: [45513,19649,9085,6988,5530,4856],
+        backgroundColor: '#f97316'
+      }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: darkScale({ ticks: { callback: v => '$' + v.toLocaleString() } }),
+        y: darkScale({})
+      }
     }
   });
 }
-function initCharts(){
-Chart.defaults.color = '#9ca3af';
-Chart.defaults.borderColor = '#2a2d3a';
-Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-Chart.defaults.font.size = 12;
-const locs = ['Marina','Soma','Kearny','Stanyan','Stonestown','Santa Clara'];
-const locColors = ['#3b82f6','#a855f7','#f59e0b','#06b6d4','#ef4444','#22c55e'];
-
-// 1. Revenue & Net Profit by Location
-new Chart(document.getElementById('locRevProfit'), {
-  type: 'bar',
-  data: {
-    labels: locs,
-    datasets: [
-      { label: 'Sales', data: [64675,85771,134155,60249,83712,68295], backgroundColor: 'rgba(59,130,246,0.7)', borderRadius: 4 },
-      { label: 'Net Profit', data: [3130,2460,9609,3369,-741,5728], backgroundColor: d => d.raw < 0 ? 'rgba(239,68,68,0.8)' : 'rgba(34,197,94,0.7)', borderRadius: 4 }
-    ]
-  },
-  options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { ticks: { callback: v => '$'+Math.round(v/1000)+'K' }, grid: { color: '#2a2d3a' } } } }
-});
-
-// 2. Net Margin by Location
-new Chart(document.getElementById('locMargin'), {
-  type: 'bar',
-  data: {
-    labels: locs,
-    datasets: [{
-      label: 'Net Margin %',
-      data: [4.8, 2.9, 7.2, 5.6, -0.9, 8.4],
-      backgroundColor: [4.8,2.9,7.2,5.6,-0.9,8.4].map(v => v < 0 ? 'rgba(239,68,68,0.8)' : 'rgba(34,197,94,0.7)'),
-      borderRadius: 4
-    }]
-  },
-  options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { callback: v => v+'%' }, grid: { color: '#2a2d3a' } } } }
-});
-
-// 3. Sales Channel Mix &#8212; Donut
-new Chart(document.getElementById('channelMix'), {
-  type: 'doughnut',
-  data: {
-    labels: ['Lunch','Dinner','Delivery','Catering'],
-    datasets: [{ data: [121421, 59767, 259460, 49680], backgroundColor: ['#3b82f6','#a855f7','#f59e0b','#22c55e'], borderWidth: 0 }]
-  },
-  options: { responsive: true, plugins: { legend: { position: 'right' }, tooltip: { callbacks: { label: ctx => ctx.label+': $'+Math.round(ctx.raw/1000)+'K ('+Math.round(ctx.raw/490328*100)+'%)' } } } }
-});
-
-// 4. Channel by Location &#8212; Stacked
-new Chart(document.getElementById('channelByLoc'), {
-  type: 'bar',
-  data: {
-    labels: locs,
-    datasets: [
-      { label: 'Lunch', data: [9154,19465,34730,17497,25431,15145], backgroundColor: '#3b82f6' },
-      { label: 'Dinner', data: [7696,3084,10975,4654,27916,5442], backgroundColor: '#a855f7' },
-      { label: 'Delivery', data: [46216,53048,78852,30162,30434,20748], backgroundColor: '#f59e0b' },
-      { label: 'Catering', data: [0,9000,6239,7457,0,26986], backgroundColor: '#22c55e' }
-    ]
-  },
-  options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => '$'+Math.round(v/1000)+'K' }, grid: { color: '#2a2d3a' } } } }
-});
-
-// 5. YoY Revenue Lines
-new Chart(document.getElementById('yoyRevenue'), {
-  type: 'bar',
-  data: {
-    labels: ['Lunch','Dinner','Delivery','Catering','Bev','Total Sales'],
-    datasets: [
-      { label: 'P2 2025', data: [109063,71340,209747,36120,7750,421505], backgroundColor: 'rgba(156,163,175,0.5)', borderRadius: 4 },
-      { label: 'P2 2026', data: [121421,59767,259460,49680,7559,496857], backgroundColor: 'rgba(245,158,11,0.7)', borderRadius: 4 }
-    ]
-  },
-  options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { ticks: { callback: v => '$'+Math.round(v/1000)+'K' }, grid: { color: '#2a2d3a' } } } }
-});
-
-// 6. Discounts comparison
-new Chart(document.getElementById('discounts'), {
-  type: 'bar',
-  data: {
-    labels: ['Employee Meals','Comps','Marketing Disc.','3rd Party Disc.','Total Disc.'],
-    datasets: [
-      { label: 'P2 2025', data: [1881,64,9758,6772,18816], backgroundColor: 'rgba(156,163,175,0.5)', borderRadius: 4 },
-      { label: 'P2 2026', data: [2170,990,4206,64,7703], backgroundColor: 'rgba(245,158,11,0.7)', borderRadius: 4 }
-    ]
-  },
-  options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { ticks: { callback: v => '$'+Math.round(v/1000)+'K' }, grid: { color: '#2a2d3a' } } } }
-});
-
-// 7. Where Each Dollar Goes
-new Chart(document.getElementById('costWaterfall'), {
-  type: 'bar',
-  data: {
-    labels: ['Food Cost','Bev Cost','Labor','Direct OpEx','G&A','Occupancy','Corp OH','Net Profit'],
-    datasets: [{
-      label: '% of Sales',
-      data: [21.7, 0.5, 30.5, 10.8, 16.4, 10.1, 5.2, 4.7],
-      backgroundColor: ['#ef4444','#f97316','#a855f7','#3b82f6','#06b6d4','#ec4899','#9ca3af','#22c55e'],
-      borderRadius: 4
-    }]
-  },
-  options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.raw+'% of sales' } } }, scales: { x: { ticks: { callback: v => v+'%' }, grid: { color: '#2a2d3a' } } } }
-});
-
-// 8. Cost YoY
-new Chart(document.getElementById('costYoY'), {
-  type: 'bar',
-  data: {
-    labels: ['Food Cost','Labor','Direct OpEx','G&A','Occupancy','Corp OH'],
-    datasets: [
-      { label: 'P2 2025 (% Sales)', data: [20.4, 33.3, 12.6, 19.6, 11.8, 4.9], backgroundColor: 'rgba(156,163,175,0.5)', borderRadius: 4 },
-      { label: 'P2 2026 (% Sales)', data: [21.7, 30.5, 10.8, 16.4, 10.1, 5.2], backgroundColor: 'rgba(245,158,11,0.7)', borderRadius: 4 }
-    ]
-  },
-  options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { ticks: { callback: v => v+'%' }, grid: { color: '#2a2d3a' } } } }
-});
-
-// 9. Food Cost Breakdown
-new Chart(document.getElementById('foodCost'), {
-  type: 'doughnut',
-  data: {
-    labels: ['Poultry ($60.9K)','Grocery ($28.2K)','Produce ($17.5K)','Dairy ($1.0K)','Bev Cost ($2.4K)'],
-    datasets: [{ data: [60855,28244,17496,1035,2449], backgroundColor: ['#f59e0b','#3b82f6','#22c55e','#06b6d4','#a855f7'], borderWidth: 0 }]
-  },
-  options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
-});
-
-// 10. Labor Breakdown
-new Chart(document.getElementById('laborBreak'), {
-  type: 'doughnut',
-  data: {
-    labels: ['BOH Wages ($56.5K)','FOH Wages ($30.3K)','Managers ($32.6K)','Payroll Tax ($13.1K)','Benefits ($13.2K)','Other ($5.9K)'],
-    datasets: [{ data: [56483,30261,32649,13128,13178,5947], backgroundColor: ['#f59e0b','#3b82f6','#a855f7','#ef4444','#22c55e','#9ca3af'], borderWidth: 0 }]
-  },
-  options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
-});
-
-// 11. Top G&A
-new Chart(document.getElementById('gaExpenses'), {
-  type: 'bar',
-  data: {
-    labels: ['3P Delivery Fees','Advertising','Acctg/Payroll','Credit Card','Insurance','Workers Comp','Software','Phone/Internet'],
-    datasets: [{
-      label: 'Amount',
-      data: [38397,21590,5745,5598,3566,2373,904,1550],
-      backgroundColor: 'rgba(59,130,246,0.7)',
-      borderRadius: 4
-    }]
-  },
-  options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { callback: v => '$'+Math.round(v/1000)+'K' }, grid: { color: '#2a2d3a' } } } }
-});
-} // end initCharts
 </script>
 </body>
 </html>
